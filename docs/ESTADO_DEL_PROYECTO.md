@@ -53,23 +53,32 @@ Esta etapa no incluye todavía:
 - Estructura inicial de carpetas creada.
 - Documento de inicio de Git creado.
 - README inicial creado.
+- Repositorio remoto público creado en GitHub.
+- Repositorio remoto registrado localmente con el nombre `origin`.
+- Primer commit publicado en la rama remota `main`.
+- Documento integrador del flujo de Git creado.
+
 
 ## Estado de Git al finalizar esta unidad
 
-- Rama actual: `main`.
-- Primer commit local: creado.
-- Repositorio remoto en GitHub: todavía no creado.
-- Archivos iniciales: incorporados al seguimiento de Git.
+- Rama local actual: `main`.
+- Rama remota vinculada: `origin/main`.
+- Repositorio remoto: `daniknd14econometrics-code/forecasting-remision-leche-uy`.
+- Primer commit publicado: `450ccaa`.
+- Documentación de Git y GitHub incorporada y publicada.
+- Repositorio local y remoto sincronizados.
+- Carpeta de trabajo sin cambios pendientes.
 
 ## Trabajo pendiente
 
-- Crear el repositorio remoto en GitHub.
-- Conectar el repositorio local con GitHub.
-- Configurar el entorno de paquetes de R.
+- Configurar el entorno reproducible de paquetes de R.
 - Desarrollar la descarga de datos del INALE.
+- Conservar una copia original fechada de los datos.
 - Crear la base SQLite.
+- Desarrollar las transformaciones y controles SQL.
 - Desarrollar y evaluar los modelos SARIMA.
+- Incorporar posteriormente GitHub Actions.
 
 ## Siguiente paso exacto
 
-Crear el repositorio remoto en GitHub y conectarlo con el repositorio local.
+Configurar el entorno reproducible de paquetes de R antes de instalar las dependencias del proyecto.
