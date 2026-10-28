@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+# Bases de datos generadas
+database/*.sqlite
+database/*.sqlite-*
