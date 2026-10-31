@@ -19,11 +19,11 @@ Actualización: 31 de octubre de 2026.
 | Dependencias de R | Registradas en `renv.lock`; comprobación local sin inconsistencias. |
 | Evaluación histórica del SARIMA frente al naïve estacional | Ejecutada: 166 orígenes mensuales, horizontes 1–12; alcance condicionado a la especificación elegida. |
 | Próximos doce pronósticos e intervalos | Generados desde septiembre de 2026; guardados en CSV/RDS. |
-| Historial operativo de pronósticos y errores en SQLite | Pendiente. Las carpetas de resultados actuales sí conservan cada corrida. |
+| Registro de ejecuciones y pronósticos en SQLite | Implementado y comprobado localmente: una ejecución, 24 pronósticos y repetición sin duplicados. Seguimiento de errores pendiente. |
 | Ejecución integrada y actualización automatizada | Pendiente. |
 | GitHub Actions | Pendiente. |
 
-El modelado y la evaluación están publicados en el commit [e98ed61](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/e98ed61edea7f7ee3bffbbb11b12378276e57da6). Se comprobó localmente árbol limpio y `0 0` entre `HEAD` y `origin/main`, y se verificó el commit en GitHub. Esta actualización documental se prepara después de esa comprobación; no se da por publicada por estar escrita.
+El modelado y la evaluación están publicados en el commit [e98ed61](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/e98ed61edea7f7ee3bffbbb11b12378276e57da6). La corrección documental posterior se publicó en [dfbbd31](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/dfbbd31d6311bf9050d20d7c35456fc1d6b552ed), con árbol local limpio y `0 0` frente a `origin/main` tras `git fetch origin`. La unidad de persistencia de los scripts 08/09 está comprobada localmente; su publicación es el siguiente paso y no se da por realizada por estar escrita.
 
 ## Objetivo del proyecto completo
 
@@ -88,6 +88,8 @@ Contiene predicciones históricas, métricas por horizonte y mes, diagnósticos,
 
 Cada ejecución crea otra carpeta y conserva origen, fecha objetivo y horizonte. Todavía falta el mecanismo que incorpore las observaciones nuevas, las compare con pronósticos emitidos previamente y guarde sus errores de forma operativa en SQLite.
 
+Los scripts 08/09 ya prepararon las tablas `forecast_ejecuciones` y `forecast_pronosticos` y registraron la corrida revisada: una ejecución y 24 filas, doce SARIMA y doce naïve. Repetir la carga reconoció el registro previo sin duplicarlo ni reemplazarlo. Se conservaron los 297 meses observados y las predicciones originales. Esto comprueba la persistencia inicial; todavía no automatiza la generación de una nueva trayectoria mensual.
+
 ## Scripts y conexión entre etapas
 
 | Archivo | Responsabilidad |
@@ -99,6 +101,8 @@ Cada ejecución crea otra carpeta y conserva origen, fecha objetivo y horizonte.
 | `R/05_preparar_explorar_serie.R` | Preparación y exploración de la serie. |
 | `R/06_modelar_evaluar_sarima.R` | Recorrido Box–Jenkins y guardado de la selección de desarrollo. |
 | `R/07_evaluar_pronosticar_sarima.R` | Backtesting histórico condicionado, comparación con naïve estacional y próximos doce pronósticos. |
+| `R/08_preparar_persistencia_sqlite.R` | Creación y comprobación de las dos tablas de ejecuciones y pronósticos. |
+| `R/09_registrar_pronosticos_sqlite.R` | Registro transaccional de la corrida revisada del 07; repetición sin duplicados y comprobación de las trayectorias completas. |
 
 Aunque el nombre histórico del archivo 06 contiene “evaluar”, su versión actual compara ajuste y diagnósticos dentro del desarrollo. No ejecuta la evaluación predictiva fuera de muestra del modelo cerrado. Las salidas del antiguo recorrido `sarima_base` y backtesting se conservaron localmente fuera del repositorio para no mezclarlas con las actuales.
 
@@ -134,6 +138,15 @@ source("R/07_evaluar_pronosticar_sarima.R", encoding = "UTF-8")
 
 `source()` ejecuta todo el 07 y crea `evaluacion07`. No hace falta repetir el 06 para consultar sus resultados o ejecutar el 07 con un cierre válido. El 07 comprueba que los datos de desarrollo coincidan con el cierre; si una descarga revisa ese tramo, requiere una revisión explícita antes de continuar.
 
+Para preparar la persistencia e importar la corrida revisada que ya está archivada, con la base existente y los archivos de `20261031_171120_23228` presentes:
+
+```r
+source("R/08_preparar_persistencia_sqlite.R", encoding = "UTF-8")
+source("R/09_registrar_pronosticos_sqlite.R", encoding = "UTF-8")
+```
+
+Estos dos pasos no reestiman modelos ni vuelven a ejecutar 06/07. El 09 importa explícitamente esa corrida; no selecciona en silencio otra carpeta ni genera una emisión nueva. Sus entradas, comprobaciones y resultados están explicados en [la documentación de persistencia](docs/sql/02_persistencia_pronosticos.md).
+
 Todavía no existe un punto de entrada que automatice el proyecto completo. El script 06 conserva fechas y decisiones del estudio y el 07 ejecuta evaluación y pronóstico como una unidad. No sustituyen aún el futuro procedimiento operativo de actualización.
 
 ## Documentación de estudio
@@ -147,13 +160,15 @@ La explicación acompaña cada unidad ejecutada: objetivo, código o comandos, s
 - [Flujo general de Git](docs/git/00_flujo_general_git.md).
 - [Registro de Windows, renv y sincronización del cierre](docs/git/04_cierre_sarima_sincronizacion.md).
 - [Publicación del script 07 y comprobaciones de Git](docs/git/05_evaluacion_predictiva_sincronizacion.md).
+- [Persistencia de ejecuciones y pronósticos: SQL y scripts 08/09](docs/sql/02_persistencia_pronosticos.md).
+- [Registro Git del cierre de persistencia](docs/git/06_persistencia_pronosticos_sincronizacion.md).
 - [Estado detallado y siguiente paso](docs/ESTADO_DEL_PROYECTO.md).
 
 El flujo de trabajo se mantiene: definir → ejecutar → comprobar → documentar → guardar y sincronizar → continuar.
 
 ## Próxima etapa
 
-Completar el funcionamiento operativo sin reabrir el modelado: registrar corridas y predicciones en SQLite, incorporar observaciones nuevas y medir los errores de pronósticos ya emitidos, integrar el flujo local y después verificar una ejecución real con GitHub Actions. El [estado del proyecto](docs/ESTADO_DEL_PROYECTO.md) separa lo completado, las decisiones abiertas y la siguiente unidad.
+Publicar la unidad de persistencia comprobada y completar el funcionamiento operativo sin reabrir el modelado: incorporar observaciones nuevas, reestimar los coeficientes del mismo SARIMA con toda la historia desde 2002, generar y registrar los siguientes doce meses, y medir los errores de pronósticos ya emitidos. Después se integrará el flujo local y se verificará una ejecución real con GitHub Actions, resolviendo antes dónde se conserva la base entre ejecuciones. El [estado del proyecto](docs/ESTADO_DEL_PROYECTO.md) separa lo completado, las decisiones abiertas y la siguiente unidad.
 
 Los materiales originales orientan la metodología; no se publican aquí sus bases internas ni se trasladan automáticamente sus fechas, coeficientes, ponderaciones o conclusiones al caso nacional del INALE.
 

@@ -4,11 +4,11 @@
 
 ## Situación actual
 
-La obtención y preparación de los datos, su carga y consulta mediante SQLite/SQL, la selección SARIMA y la evaluación histórica del modelo están implementadas y ejecutadas. El script 06 cerró la selección; el 07 comparó el modelo con el naïve estacional y produjo los siguientes doce pronósticos con intervalos. Queda por completar la integración operativa de actualizaciones, seguimiento de errores y GitHub Actions.
+La obtención y preparación de los datos, su carga y consulta mediante SQLite/SQL, la selección SARIMA y la evaluación histórica del modelo están implementadas y ejecutadas. El script 06 cerró la selección; el 07 comparó el modelo con el naïve estacional y produjo los siguientes doce pronósticos con intervalos. Los scripts 08/09 ya prepararon las tablas y registraron esa corrida en SQLite, con repetición sin duplicados comprobada localmente. Queda por completar la integración operativa de actualizaciones, seguimiento de errores y GitHub Actions.
 
 El cierre de modelado se publicó en `d6af68f`. La evaluación, pronósticos y documentación se publicaron después en **`e98ed61`** (`Document SARIMA evaluation and publish monthly forecasts`), con 32 archivos cambiados. Daniel comprobó `renv::status()` consistente, envío correcto, árbol limpio y `0 0` después de `git fetch origin`.
 
-También se verificó en GitHub que `main` apunta a `e98ed61edea7f7ee3bffbbb11b12378276e57da6` y contiene los scripts 01–07 y las salidas de la corrida revisada. Esta revisión de README, estado y registro Git es posterior a ese commit; su publicación documental sigue su propio paso de comprobación.
+La corrección de README, estado y registro Git se publicó posteriormente en `dfbbd31` (`Update forecasting project status and correct README`). Daniel aportó la salida de commit, push, fetch, árbol limpio y `0 0` frente a `origin/main`. Esa es la última sincronización comprobada. La nueva unidad de persistencia está ejecutada localmente y su publicación sigue pendiente de sus propios comandos y comprobación.
 
 ## Objetivo y alcance vigentes
 
@@ -40,8 +40,12 @@ Se mantiene el alcance inicial SARIMA frente al naïve estacional. ARIMAX con pr
 | Pronóstico actual | Origen septiembre de 2026; doce meses hasta septiembre de 2027, con intervalos. |
 | Persistencia actual | CSV/RDS y gráficos en una carpeta por corrida; no se sobrescriben ejecuciones anteriores. |
 | Publicación de evaluación | Commit `e98ed61` recibido y comprobado; sincronización local/remota confirmada. |
+| Corrección documental | Commit `dfbbd31` enviado; árbol limpio y sincronización local/remota confirmados por la salida aportada. |
+| Preparación de persistencia | Script 08 ejecutado: tablas `forecast_ejecuciones` y `forecast_pronosticos`, inicialmente vacías. |
+| Carga inicial de pronósticos | Script 09 ejecutado: una ejecución, 24 filas; doce SARIMA y doce naïve, de octubre de 2026 a septiembre de 2027. |
+| Repetición de la carga | Segundo `source()` del 09: `Ya registrada; sin cambios ni duplicados`; totales 1/24 y datos observados conservados. |
 
-Los comandos e interpretación se conservan en [el cierre del modelado](git/04_cierre_sarima_sincronizacion.md) y [el cierre predictivo](git/05_evaluacion_predictiva_sincronizacion.md). No hay que repetir las estimaciones ni los movimientos de resultados anteriores para actualizar documentación.
+Los comandos e interpretación se conservan en [el cierre del modelado](git/04_cierre_sarima_sincronizacion.md), [el cierre predictivo](git/05_evaluacion_predictiva_sincronizacion.md) y [el registro de persistencia](git/06_persistencia_pronosticos_sincronizacion.md). Este último distingue las pruebas locales completadas de la publicación Git pendiente. No hay que repetir las estimaciones ni los movimientos de resultados anteriores para actualizar documentación.
 
 ## Decisiones de modelado cerradas
 
@@ -138,7 +142,9 @@ Entradas de continuidad principales:
 - `16_objeto_evaluacion07.rds`: evaluación histórica y resultados de la corrida.
 - `00_diseno_evaluacion.csv` y `17_sessionInfo.txt`: diseño, huella del cierre y versiones.
 
-Estos archivos ya almacenan resultados. Lo pendiente no es generar por primera vez pronósticos ni guardarlos en disco, sino integrar su historial y seguimiento mediante SQL y el proceso de actualización.
+Estos archivos ya almacenan resultados y la corrida futura también quedó registrada en SQLite mediante el 09. Las tablas contienen una ejecución y 24 pronósticos. Falta conectar la generación de nuevas trayectorias con su registro y seguimiento; no hace falta generar otra vez los pronósticos iniciales.
+
+Las dos salidas locales del 09 conservaron 297 meses, del 2002-01-01 al 2026-09-01, con suma de 44.046.232.078 litros. La segunda ejecución reconoció la carga previa. El procedimiento, la estructura de tablas y las comprobaciones están explicados en [persistencia de pronósticos](sql/02_persistencia_pronosticos.md).
 
 ## Límites que permanecen explícitos
 
@@ -152,7 +158,7 @@ Estos archivos ya almacenan resultados. Lo pendiente no es generar por primera v
 
 | Orden | Tarea | Situación |
 |---|---|---|
-| 1 | Registrar corridas y pronósticos mediante SQL/SQLite | Diseñar claves, escritura transaccional y repetición sin duplicados; conservar los archivos ya publicados. |
+| 1 | Publicar la unidad de persistencia comprobada | Claves, transacción y repetición sin duplicados ya implementadas y ejecutadas en 08/09; falta sincronizar esta unidad con GitHub. |
 | 2 | Contrastar pronósticos emitidos con datos nuevos | Vincular por fecha objetivo y mantener el origen; medir errores sin sustituir la predicción anterior. |
 | 3 | Integrar actualización y reestimación | Un punto de entrada para descarga/carga, controles, registro, pronósticos y metadatos; sin repetir automáticamente la selección del 06. |
 | 4 | Comprobar un segundo ciclo operativo | Ensayo controlado de llegada de datos y segunda ejecución sin duplicados. Tener 297 meses en el 07 no demuestra todavía este ciclo completo. |
@@ -177,15 +183,17 @@ Se verificaron acumulación de diferencias, varianza predictiva integrada y vuel
 
 ## Decisiones que faltan para la operación
 
-Antes de escribir el siguiente módulo se concretará un esquema sencillo de corridas y pronósticos en SQLite, qué identifica una repetición de la misma ejecución y cómo se registran observaciones nuevas o revisadas. La regla operativa debe dejar explícito que el ejercicio actual conserva SARIMA y referencia; no existe una regla híbrida o una sustitución automática ya acordada.
+El esquema inicial de corridas y pronósticos ya quedó concretado en 08/09. Repetir un identificador con la misma fuente, metadatos y pronósticos no escribe otra vez; reutilizarlo con contenido diferente produce un error. Queda por conectar ese registro con datos nuevos o revisados y con nuevas emisiones. La regla operativa conserva SARIMA y referencia; no existe una regla híbrida o una sustitución automática acordada.
 
-El 07 ya conserva resultados por corrida, pero no escribe en SQLite ni compara automáticamente los nuevos datos con pronósticos previamente emitidos. El 03 reconstruye staging y el SQL actual reconstruye la tabla analítica; no constituyen un historial de publicaciones de la fuente. No hay un script de entrada único ni archivos de workflow en el árbol del commit revisado.
+Cada nueva emisión utilizará toda la historia desde enero de 2002 hasta el último mes observado, reestimará los coeficientes de la misma especificación seleccionada y generará doce meses completos. No se repetirá mensualmente todo el análisis del 06 ni el backtesting completo del 07. La revisión periódica de la especificación se documentará aparte; no se implementó una reselección automática.
+
+El 07 conserva resultados por corrida y el 09 importa la corrida revisada a SQLite; aún no se comparan automáticamente los datos nuevos con pronósticos previamente emitidos. El 03 reconstruye staging y el SQL analítico reconstruye la tabla analítica; no constituyen un historial de publicaciones de la fuente. No se ha implementado un script de entrada único ni un workflow de GitHub Actions. La base sigue excluida de Git y deberá definirse su conservación entre ejecutores temporales antes de automatizar en remoto.
 
 La ampliación ARIMAX con precio y lluvia es una línea posterior. Necesitará datos alineados y una definición de qué regresores se conocen al origen o cómo se pronostican. El rendimiento actual motiva investigarla, pero no demuestra que vaya a mejorar. No se incorpora a las tareas obligatorias inmediatas.
 
 ## Revisión documental del cierre
 
-La inspección de `e98ed61` detectó que el README publicado correspondía por error a otro proyecto de fuentes de PTF. Se prepara su sustitución por el README de forecasting actualizado, junto con este estado y la evidencia de Git. Esta corrección no altera código estadístico, resultados ni la decisión de modelado.
+La inspección de `e98ed61` detectó que el README publicado correspondía por error a otro proyecto de fuentes de PTF. Su sustitución por el README de forecasting se publicó en `dfbbd31`, junto con este estado y la evidencia de Git. La corrección no alteró código estadístico, resultados ni la decisión de modelado. Esta actualización incorpora ahora el cierre local de persistencia sin afirmar que ya esté publicado.
 
 ## Forma de trabajo que se conserva
 
@@ -200,4 +208,4 @@ La inspección de `e98ed61` detectó que el README publicado correspondía por e
 
 ## Siguiente paso exacto
 
-Publicar la corrección y actualización de README, estado y registro Git con los comandos de la sección 11 de [el cierre predictivo](git/05_evaluacion_predictiva_sincronizacion.md). Después, acordar la unidad de persistencia operativa en SQLite, como siguiente paso acotado. No se reejecutan los modelos para completar esta actualización documental.
+Guardar esta documentación y seguir [el registro Git de persistencia](git/06_persistencia_pronosticos_sincronizacion.md): revisar cambios y estado remoto, preparar únicamente los siete archivos de esta unidad, comprobar el área preparada y publicar. Después construiremos el ciclo local de actualización y nueva trayectoria a doce meses, sin reabrir la selección del 06. No se reejecutan los modelos para completar esta publicación.
