@@ -4,11 +4,11 @@
 
 ## Situación actual
 
-La obtención y preparación de los datos, su carga y consulta mediante SQLite/SQL, la selección SARIMA y la evaluación histórica del modelo están implementadas y ejecutadas. El script 06 cerró la selección; el 07 comparó el modelo con el naïve estacional y produjo los siguientes doce pronósticos con intervalos. Los scripts 08/09 ya prepararon las tablas y registraron esa corrida en SQLite, con repetición sin duplicados comprobada localmente. Queda por completar la integración operativa de actualizaciones, seguimiento de errores y GitHub Actions.
+La obtención y preparación de datos, SQLite/SQL, la selección SARIMA y la evaluación histórica están implementadas y ejecutadas. Los scripts 08/09 registraron la corrida futura en SQLite. El 10 integra el ciclo local de comprobación, actualización y nueva emisión; Daniel lo ejecutó contra la fuente pública sin datos nuevos y reconoció la emisión existente, sin reestimar ni duplicar. Las ramas con un mes nuevo y revisiones se probaron en base temporal. Quedan publicación del 10, persistencia remota, GitHub Actions y cierre del seguimiento acumulado.
 
 El cierre de modelado se publicó en `d6af68f`. La evaluación, pronósticos y documentación se publicaron después en **`e98ed61`** (`Document SARIMA evaluation and publish monthly forecasts`), con 32 archivos cambiados. Daniel comprobó `renv::status()` consistente, envío correcto, árbol limpio y `0 0` después de `git fetch origin`.
 
-La corrección de README, estado y registro Git se publicó posteriormente en `dfbbd31` (`Update forecasting project status and correct README`). Daniel aportó la salida de commit, push, fetch, árbol limpio y `0 0` frente a `origin/main`. Esa es la última sincronización comprobada. La nueva unidad de persistencia está ejecutada localmente y su publicación sigue pendiente de sus propios comandos y comprobación.
+La corrección documental se publicó en `dfbbd31`. La persistencia 08/09 se publicó después en `38b950d21e922f4012898bb1882c5b3022754ff5`, con el mensaje `Add SQLite forecast persistence and verified initial registrationD`. La D final es parte del texto del mensaje, sin efecto en los archivos. Daniel aportó push correcto, árbol limpio y `0 0`, y se verificó ese commit en `main` remoto. Es la última sincronización comprobada. La unidad 10 está ejecutada localmente, pero su publicación sigue pendiente.
 
 ## Objetivo y alcance vigentes
 
@@ -44,8 +44,13 @@ Se mantiene el alcance inicial SARIMA frente al naïve estacional. ARIMAX con pr
 | Preparación de persistencia | Script 08 ejecutado: tablas `forecast_ejecuciones` y `forecast_pronosticos`, inicialmente vacías. |
 | Carga inicial de pronósticos | Script 09 ejecutado: una ejecución, 24 filas; doce SARIMA y doce naïve, de octubre de 2026 a septiembre de 2027. |
 | Repetición de la carga | Segundo `source()` del 09: `Ya registrada; sin cambios ni duplicados`; totales 1/24 y datos observados conservados. |
+| Publicación de persistencia | Commit `38b950d` enviado y verificado en GitHub; árbol local limpio y sincronización confirmada. |
+| Ciclo local 10 | Descarga/comprobación real ejecutada en Windows: 297 meses, sin meses nuevos ni revisiones, emisión inicial reconocida y totales 1/24 conservados. |
+| Nuevos meses y revisiones | Ensayos en base temporal con un mes ficticio, revisión histórica, repetición sin duplicados y reversión integral ante error. |
+| Seguimiento inicial | Consulta de errores emitido–observado implementada; cero errores disponibles en la comprobación real actual. |
+| Reporte completo del 10 | Versión ejecutada en Windows: doce filas SARIMA de octubre de 2026 a septiembre de 2027, reales/diferencias pendientes, HTML/CSV e índice por emisión generados; totales 1/24 conservados. |
 
-Los comandos e interpretación se conservan en [el cierre del modelado](git/04_cierre_sarima_sincronizacion.md), [el cierre predictivo](git/05_evaluacion_predictiva_sincronizacion.md) y [el registro de persistencia](git/06_persistencia_pronosticos_sincronizacion.md). Este último distingue las pruebas locales completadas de la publicación Git pendiente. No hay que repetir las estimaciones ni los movimientos de resultados anteriores para actualizar documentación.
+Los comandos e interpretación se conservan en [el cierre del modelado](git/04_cierre_sarima_sincronizacion.md), [el cierre predictivo](git/05_evaluacion_predictiva_sincronizacion.md), [el registro de persistencia](git/06_persistencia_pronosticos_sincronizacion.md) y [el registro del ciclo local](git/07_actualizacion_local_sincronizacion.md). Este último distingue la ejecución del 10 comprobada de su publicación pendiente. No hay que repetir estimaciones ni movimientos de resultados anteriores para actualizar documentación.
 
 ## Decisiones de modelado cerradas
 
@@ -142,9 +147,25 @@ Entradas de continuidad principales:
 - `16_objeto_evaluacion07.rds`: evaluación histórica y resultados de la corrida.
 - `00_diseno_evaluacion.csv` y `17_sessionInfo.txt`: diseño, huella del cierre y versiones.
 
-Estos archivos ya almacenan resultados y la corrida futura también quedó registrada en SQLite mediante el 09. Las tablas contienen una ejecución y 24 pronósticos. Falta conectar la generación de nuevas trayectorias con su registro y seguimiento; no hace falta generar otra vez los pronósticos iniciales.
+Estos archivos ya almacenan resultados y la corrida futura también quedó registrada en SQLite mediante el 09. El 10 ya conecta la comprobación de información, estimación condicional, generación y registro. En la ejecución real no correspondió emitir otra vez: los datos seguían iguales y las tablas conservaron una ejecución y 24 pronósticos.
 
 Las dos salidas locales del 09 conservaron 297 meses, del 2002-01-01 al 2026-09-01, con suma de 44.046.232.078 litros. La segunda ejecución reconoció la carga previa. El procedimiento, la estructura de tablas y las comprobaciones están explicados en [persistencia de pronósticos](sql/02_persistencia_pronosticos.md).
+
+La ejecución local del 10 quedó registrada en:
+
+```text
+outputs/operacion_mensual/op10_20261031_192032004458Z_23228/
+```
+
+Informó cero meses nuevos, cero revisiones de litros, ninguna reestimación, actualización analítica `FALSE` y cero errores todavía observables. La documentación del [script 10](R/10_actualizacion_pronosticos.md) distingue esta evidencia real de las pruebas con datos ficticios hechas en una base temporal separada.
+
+La mejora de reportes también se ejecutó en Windows y produjo otro control:
+
+```text
+outputs/operacion_mensual/op10_20261031_195334646465Z_23228/
+```
+
+La salida mostró las doce fechas objetivo del SARIMA con reales/diferencias `NA` y estado `Pendiente`, e informó `outputs/reportes/pronostico_actual.html` y `outputs/reportes/index.html`. El reporte actual también tiene CSV y cada emisión conserva su reporte de doce meses, cuyo seguimiento se actualiza cuando llegan observados. Se mantuvieron los 297 meses y una ejecución con 24 pronósticos, sin reestimar ni actualizar los datos. No se interpretan valores ausentes como errores cero. El código queda sin cambios después de esta comprobación; falta publicar la unidad con sus reportes.
 
 ## Límites que permanecen explícitos
 
@@ -158,12 +179,12 @@ Las dos salidas locales del 09 conservaron 297 meses, del 2002-01-01 al 2026-09-
 
 | Orden | Tarea | Situación |
 |---|---|---|
-| 1 | Publicar la unidad de persistencia comprobada | Claves, transacción y repetición sin duplicados ya implementadas y ejecutadas en 08/09; falta sincronizar esta unidad con GitHub. |
-| 2 | Contrastar pronósticos emitidos con datos nuevos | Vincular por fecha objetivo y mantener el origen; medir errores sin sustituir la predicción anterior. |
-| 3 | Integrar actualización y reestimación | Un punto de entrada para descarga/carga, controles, registro, pronósticos y metadatos; sin repetir automáticamente la selección del 06. |
-| 4 | Comprobar un segundo ciclo operativo | Ensayo controlado de llegada de datos y segunda ejecución sin duplicados. Tener 297 meses en el 07 no demuestra todavía este ciclo completo. |
-| 5 | Definir persistencia y ejecutar GitHub Actions | Resolver qué se conserva entre ejecutores temporales y verificar una ejecución real. |
-| 6 | Completar presentación y reproducción final | README y estado coherentes, instrucciones de ejecución y evidencia de actualización operativa/Actions. |
+| 1 | Publicar el ciclo local 10 | Código, documentos, dos controles reales y reportes preparados; falta commit/push y comprobación de sincronización. |
+| 2 | Definir persistencia entre ejecutores temporales | Conservar SQLite y los artefactos que necesita el reconocimiento de emisiones; no asumir que quedan guardados en Actions. |
+| 3 | Configurar y verificar GitHub Actions | Utilizar el punto de entrada operativo y comprobar una ejecución real. |
+| 4 | Completar evidencia de crecimiento en el entorno final | Mes nuevo y revisión ya ensayados en base temporal; conservar evidencia de prueba controlada en el flujo final sin mezclar datos ficticios con los reales. |
+| 5 | Completar seguimiento acumulado | Errores individuales ya consultados por el 10; falta el resumen operativo de métricas por horizonte cuando haya resultados observables. |
+| 6 | Presentación y reproducción final | Instrucciones coherentes, continuidad de datos/artefactos y evidencia de ejecución/actualización remota. |
 
 ## Base metodológica de la evaluación realizada
 
@@ -183,17 +204,17 @@ Se verificaron acumulación de diferencias, varianza predictiva integrada y vuel
 
 ## Decisiones que faltan para la operación
 
-El esquema inicial de corridas y pronósticos ya quedó concretado en 08/09. Repetir un identificador con la misma fuente, metadatos y pronósticos no escribe otra vez; reutilizarlo con contenido diferente produce un error. Queda por conectar ese registro con datos nuevos o revisados y con nuevas emisiones. La regla operativa conserva SARIMA y referencia; no existe una regla híbrida o una sustitución automática acordada.
+El esquema inicial quedó concretado en 08/09 y el 10 ya lo conecta con la comprobación de datos nuevos o revisados y nuevas emisiones. Una emisión equivalente requiere la misma historia, cierre y registro completo. Si cambia la historia de litros se prepara otra emisión, incluso desde el mismo último mes; se conserva la anterior. La regla operativa mantiene SARIMA y referencia; no existe una regla híbrida o sustitución automática acordada.
 
 Cada nueva emisión utilizará toda la historia desde enero de 2002 hasta el último mes observado, reestimará los coeficientes de la misma especificación seleccionada y generará doce meses completos. No se repetirá mensualmente todo el análisis del 06 ni el backtesting completo del 07. La revisión periódica de la especificación se documentará aparte; no se implementó una reselección automática.
 
-El 07 conserva resultados por corrida y el 09 importa la corrida revisada a SQLite; aún no se comparan automáticamente los datos nuevos con pronósticos previamente emitidos. El 03 reconstruye staging y el SQL analítico reconstruye la tabla analítica; no constituyen un historial de publicaciones de la fuente. No se ha implementado un script de entrada único ni un workflow de GitHub Actions. La base sigue excluida de Git y deberá definirse su conservación entre ejecutores temporales antes de automatizar en remoto.
+El 10 es el punto de entrada operativo local; no repite 06/07. Reutiliza las transformaciones SQL existentes dentro de una transacción junto con el registro de una nueva emisión. Guarda por separado las comparaciones con observados vigentes. La tabla analítica representa la versión actual, mientras que originales y datos de cada corrida preservan su información de origen. No se ha implementado aún un workflow de GitHub Actions. La base sigue excluida de Git y deberá definirse su conservación, junto con los artefactos asociados, entre ejecutores temporales.
 
 La ampliación ARIMAX con precio y lluvia es una línea posterior. Necesitará datos alineados y una definición de qué regresores se conocen al origen o cómo se pronostican. El rendimiento actual motiva investigarla, pero no demuestra que vaya a mejorar. No se incorpora a las tareas obligatorias inmediatas.
 
 ## Revisión documental del cierre
 
-La inspección de `e98ed61` detectó que el README publicado correspondía por error a otro proyecto de fuentes de PTF. Su sustitución por el README de forecasting se publicó en `dfbbd31`, junto con este estado y la evidencia de Git. La corrección no alteró código estadístico, resultados ni la decisión de modelado. Esta actualización incorpora ahora el cierre local de persistencia sin afirmar que ya esté publicado.
+La inspección de `e98ed61` detectó que el README publicado correspondía por error a otro proyecto de fuentes de PTF. Su sustitución por el README de forecasting se publicó en `dfbbd31`. La persistencia se publicó en `38b950d`. Esta actualización incorpora ahora la comprobación real del ciclo 10, sin afirmar que su publicación ya se realizó. No altera resultados del 06/07 ni la decisión de modelado.
 
 ## Forma de trabajo que se conserva
 
@@ -208,4 +229,4 @@ La inspección de `e98ed61` detectó que el README publicado correspondía por e
 
 ## Siguiente paso exacto
 
-Guardar esta documentación y seguir [el registro Git de persistencia](git/06_persistencia_pronosticos_sincronizacion.md): revisar cambios y estado remoto, preparar únicamente los siete archivos de esta unidad, comprobar el área preparada y publicar. Después construiremos el ciclo local de actualización y nueva trayectoria a doce meses, sin reabrir la selección del 06. No se reejecutan los modelos para completar esta publicación.
+Guardar esta documentación y seguir [el registro Git del ciclo local](git/07_actualizacion_local_sincronizacion.md): revisar cambios y estado remoto, preparar el script 10, sus documentos, README/estado y la carpeta de control aportada, y publicar tras comprobar el área preparada. Después se concretará la persistencia remota y el workflow de GitHub Actions. No se reejecutan modelos para completar esta publicación.
