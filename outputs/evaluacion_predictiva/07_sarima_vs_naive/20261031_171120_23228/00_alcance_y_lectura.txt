@@ -1,0 +1,18 @@
+Evaluacion historica condicionada a la especificacion elegida con datos hasta septiembre 2025.
+Ordenes, transformacion y fechas/tipos de efectos se mantienen fijos; coeficientes se reestiman en cada origen.
+Esta eleccion retrospectiva no es una prueba independiente del procedimiento de seleccion completo.
+Ambos modelos utilizan los mismos origenes y targets; cada origen dispone de doce resultados observados.
+No se utilizan valores posteriores al origen para estimar coeficientes ni construir predictores.
+No se reproducen versiones historicas de la base: se usan las observaciones actualmente almacenadas.
+Los contrastes mensuales actuan sobre Delta log; AO/TC entran como diferencias de perfiles en log-niveles.
+Media SARIMA en litros = dias*exp(mu_log+var_log/2); mediana = dias*exp(mu_log).
+Los intervalos usan incertidumbre de innovaciones, parametros estimados fijos y regresores conocidos.
+No incorporan incertidumbre de seleccion, de parametros, futuras revisiones ni futuros outliers desconocidos.
+La mayor dispersion residual temprana puede afectar la calibracion de los intervalos; revisar cobertura y ancho.
+Las bandas del naive estacional proceden de snaive sobre promedio diario; no se truncan limites negativos.
+Errores de distintos horizontes/origenes pueden solaparse. No se presentan tests de precision ni errores iid.
+Resultados por mes objetivo y horizonte tienen menor n: interpretar como desglose descriptivo.
+Mejora_MAE_pct positiva favorece SARIMA; negativa favorece naive. No se fuerza un ganador global.
+El pronostico futuro del SARIMA se presenta por decision del proyecto, sin atribuir superioridad no observada.
+El modelo del cierre 06 no se modifica; su copia se usa para verificar arquitectura, diseno y datos.
+Cada ejecucion crea otra carpeta. Se conservan origen, fecha objetivo y horizonte para seguimiento posterior.

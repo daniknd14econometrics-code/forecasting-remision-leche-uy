@@ -1,0 +1,2 @@
+"ejercicio","origen","n_niveles","inicio_elegido","logLik","sigma_innovacion","raiz_AR_regular","raiz_AR_estacional","raiz_MA_regular","matriz_cov_valida","LB12_orientativo","LB24_orientativo","LB36_orientativo","discrepancia_acumulacion"
+"Pronostico_futuro",2026-09-01,297,"AR_negativo",539.34874442064,0.0390644089830926,1.45721926827551,1.1281840173443,1.10174408455988,TRUE,0.342988058751586,0.19867839022007,0.241550402783421,3.5527136788005e-15
