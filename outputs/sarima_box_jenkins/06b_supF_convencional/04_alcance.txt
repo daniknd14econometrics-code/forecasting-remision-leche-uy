@@ -1,0 +1,9 @@
+Referencia: taller_03B_cambio_estructural.R, funcion run_supF.
+Modelo: log_diaria ~ t; sin indicadores mensuales.
+H0: constante y pendiente estables.
+H1: cambia al menos uno de esos coeficientes.
+El p convencional contempla la busqueda entre fechas.
+No corrige por errores I(1), autocorrelacion ni estacionalidad.
+No es una cota del p correctamente calibrado.
+La fecha candidata no constituye por si sola un quiebre confirmado.
+No se modificaron d, D ni la muestra.

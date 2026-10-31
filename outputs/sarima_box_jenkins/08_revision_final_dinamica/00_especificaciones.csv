@@ -1,0 +1,19 @@
+"candidato","regular","etapa","p","q","P","Q","modelo_nivel","fundamento","referencia_heredada_05"
+"SAR1_referencia","Ninguno","Referencia",0,0,1,0,"(0,1,0)(1,0,0)[12]","Referencia sin dependencia regular: debe contrastarse, no darse por definitiva ; alternativa anual SAR1",FALSE
+"SMA1_alternativo","Ninguno","Referencia",0,0,0,1,"(0,1,0)(0,0,1)[12]","Referencia sin dependencia regular: debe contrastarse, no darse por definitiva ; alternativa anual SMA1",FALSE
+"AR1_SAR1","AR1","Revision basica",1,0,1,0,"(1,1,0)(1,0,0)[12]","Persistencia regular de un retardo; comprobar si explica la dependencia corta ; alternativa anual SAR1",FALSE
+"AR1_SMA1","AR1","Revision basica",1,0,0,1,"(1,1,0)(0,0,1)[12]","Persistencia regular de un retardo; comprobar si explica la dependencia corta ; alternativa anual SMA1",FALSE
+"AR2_SAR1","AR2","Revision basica",2,0,1,0,"(2,1,0)(1,0,0)[12]","Dos retardos AR; permite oscilaciones sin exigir un pico grande en el primer retardo ; alternativa anual SAR1",FALSE
+"AR2_SMA1","AR2","Revision basica",2,0,0,1,"(2,1,0)(0,0,1)[12]","Dos retardos AR; permite oscilaciones sin exigir un pico grande en el primer retardo ; alternativa anual SMA1",FALSE
+"MA1_SAR1","MA1","Revision basica",0,1,1,0,"(0,1,1)(1,0,0)[12]","Un retardo MA; alternativa a explicar la dependencia corta con AR ; alternativa anual SAR1",FALSE
+"MA1_SMA1","MA1","Revision basica",0,1,0,1,"(0,1,1)(0,0,1)[12]","Un retardo MA; alternativa a explicar la dependencia corta con AR ; alternativa anual SMA1",FALSE
+"MA2_SAR1","MA2","Revision basica",0,2,1,0,"(0,1,2)(1,0,0)[12]","Dos retardos MA ante identificacion regular sin corte inequivoco ; alternativa anual SAR1",FALSE
+"MA2_SMA1","MA2","Revision basica",0,2,0,1,"(0,1,2)(0,0,1)[12]","Dos retardos MA ante identificacion regular sin corte inequivoco ; alternativa anual SMA1",FALSE
+"ARMA11_SAR1","ARMA11","Revision basica",1,1,1,0,"(1,1,1)(1,0,0)[12]","Mezcla minima AR/MA; revisar precision y posibles factores casi comunes ; alternativa anual SAR1",FALSE
+"ARMA11_SMA1","ARMA11","Revision basica",1,1,0,1,"(1,1,1)(0,0,1)[12]","Mezcla minima AR/MA; revisar precision y posibles factores casi comunes ; alternativa anual SMA1",FALSE
+"ARMA21_SAR1","ARMA21","Ampliacion mixta",2,1,1,0,"(2,1,1)(1,0,0)[12]","Extension de ARMA11 por el lado AR si las alternativas simples son insuficientes ; alternativa anual SAR1",TRUE
+"ARMA21_SMA1","ARMA21","Ampliacion mixta",2,1,0,1,"(2,1,1)(0,0,1)[12]","Extension de ARMA11 por el lado AR si las alternativas simples son insuficientes ; alternativa anual SMA1",FALSE
+"ARMA12_SAR1","ARMA12","Ampliacion mixta",1,2,1,0,"(1,1,2)(1,0,0)[12]","Extension de ARMA11 por el lado MA si las alternativas simples son insuficientes ; alternativa anual SAR1",FALSE
+"ARMA12_SMA1","ARMA12","Ampliacion mixta",1,2,0,1,"(1,1,2)(0,0,1)[12]","Extension de ARMA11 por el lado MA si las alternativas simples son insuficientes ; alternativa anual SMA1",FALSE
+"ARMA22_SAR1","ARMA22","Ampliacion mixta",2,2,1,0,"(2,1,2)(1,0,0)[12]","Extension mixta de mayor complejidad; exige mejora y parametros identificables ; alternativa anual SAR1",FALSE
+"ARMA22_SMA1","ARMA22","Ampliacion mixta",2,2,0,1,"(2,1,2)(0,0,1)[12]","Extension mixta de mayor complejidad; exige mejora y parametros identificables ; alternativa anual SMA1",FALSE

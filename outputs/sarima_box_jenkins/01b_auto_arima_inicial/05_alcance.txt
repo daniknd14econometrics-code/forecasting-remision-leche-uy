@@ -1,0 +1,7 @@
+Referencia automatica inicial sobre log diario y toda la muestra de desarrollo.
+Sin efectos mensuales ni outliers introducidos manualmente; d/D se eligen automaticamente.
+Los limites dinamicos p/q<=2, P/Q<=1 y max.order=5 proceden del auditor del taller 05B.
+seas selecciona D por fuerza estacional; no equivale al contraste HEGY del bloque 02A.
+No usar sus IC para ordenar junto al manual si difieren diferencias, regresores o muestra efectiva.
+El auditor 08B permite la comparacion manteniendo la arquitectura manual.
+Su eleccion no sustituye identificacion, estimacion y validacion Box-Jenkins.

@@ -1,0 +1,37 @@
+"especificacion","prueba","frecuencia","estadistico","p_value","rechaza_H0_5pct","k_auxiliar"
+"principal_AIC","t_1","Cero: raiz regular",-2.38437236491532,0.311045945641188,FALSE,1
+"principal_AIC","t_2","Pi: periodo de 2 meses",-4.44532617748533,0.000114142756700107,TRUE,1
+"principal_AIC","F_3:4","Pi/6: periodo de 12 meses",9.71849249682136,0.00198885594753245,TRUE,1
+"principal_AIC","F_5:6","Pi/3: periodo de 6 meses",16.8908816376004,0,TRUE,1
+"principal_AIC","F_7:8","Pi/2: periodo de 4 meses",13.956224505526,0,TRUE,1
+"principal_AIC","F_9:10","2Pi/3: periodo de 3 meses",13.2553423631576,0.000107613930171062,TRUE,1
+"principal_AIC","F_11:12","5Pi/6: periodo de 2.4 meses",20.027181366488,0,TRUE,1
+"principal_AIC","F_2:12","Conjunto de raices estacionales",16.0205741154759,0,TRUE,1
+"principal_AIC","F_1:12","Conjunto de todas las raices",15.6177430331642,0,TRUE,1
+"principal_BIC","t_1","Cero: raiz regular",-2.04245976278924,0.487005336670996,FALSE,0
+"principal_BIC","t_2","Pi: periodo de 2 meses",-5.72126008645765,0,TRUE,0
+"principal_BIC","F_3:4","Pi/6: periodo de 12 meses",11.6275262871374,0.00020577605606098,TRUE,0
+"principal_BIC","F_5:6","Pi/3: periodo de 6 meses",25.1650067294941,0,TRUE,0
+"principal_BIC","F_7:8","Pi/2: periodo de 4 meses",23.6133988663309,0,TRUE,0
+"principal_BIC","F_9:10","2Pi/3: periodo de 3 meses",21.9006890045492,0,TRUE,0
+"principal_BIC","F_11:12","5Pi/6: periodo de 2.4 meses",34.8630382097367,0,TRUE,0
+"principal_BIC","F_2:12","Conjunto de raices estacionales",90.8903768771627,0,TRUE,0
+"principal_BIC","F_1:12","Conjunto de todas las raices",83.6511533001906,0,TRUE,0
+"sin_meses_AIC","t_1","Cero: raiz regular",-1.26887222429128,0.809839782538431,FALSE,22
+"sin_meses_AIC","t_2","Pi: periodo de 2 meses",-1.77178927950744,0.0524026503524919,FALSE,22
+"sin_meses_AIC","F_3:4","Pi/6: periodo de 12 meses",0.820581704380711,0.476795494652108,FALSE,22
+"sin_meses_AIC","F_5:6","Pi/3: periodo de 6 meses",0.251622993220404,0.800719621831969,FALSE,22
+"sin_meses_AIC","F_7:8","Pi/2: periodo de 4 meses",3.17232727118867,0.0505060506546618,FALSE,22
+"sin_meses_AIC","F_9:10","2Pi/3: periodo de 3 meses",10.5282974231032,0,TRUE,22
+"sin_meses_AIC","F_11:12","5Pi/6: periodo de 2.4 meses",5.05007717676667,0.00803536661923297,TRUE,22
+"sin_meses_AIC","F_2:12","Conjunto de raices estacionales",4.57295951596125,0,TRUE,22
+"sin_meses_AIC","F_1:12","Conjunto de todas las raices",4.37946311513182,0,TRUE,22
+"sin_meses_BIC","t_1","Cero: raiz regular",-2.34626409922147,0.323903798277304,FALSE,1
+"sin_meses_BIC","t_2","Pi: periodo de 2 meses",-4.15578715282988,0,TRUE,1
+"sin_meses_BIC","F_3:4","Pi/6: periodo de 12 meses",0.9706840022626,0.409759922046545,FALSE,1
+"sin_meses_BIC","F_5:6","Pi/3: periodo de 6 meses",3.59993485235619,0.0328807140711412,TRUE,1
+"sin_meses_BIC","F_7:8","Pi/2: periodo de 4 meses",8.85186052212354,0.000212175847197601,TRUE,1
+"sin_meses_BIC","F_9:10","2Pi/3: periodo de 3 meses",10.444977186951,0,TRUE,1
+"sin_meses_BIC","F_11:12","5Pi/6: periodo de 2.4 meses",15.792232578493,0,TRUE,1
+"sin_meses_BIC","F_2:12","Conjunto de raices estacionales",9.13398915838015,0,TRUE,1
+"sin_meses_BIC","F_1:12","Conjunto de todas las raices",9.17543584987696,0,TRUE,1

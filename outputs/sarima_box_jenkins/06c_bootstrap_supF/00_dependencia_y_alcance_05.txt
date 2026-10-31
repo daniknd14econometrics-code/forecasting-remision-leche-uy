@@ -1,0 +1,6 @@
+Modelo provisional elegido en 05: ARMA21_SAR1_sin_deriva
+La pregunta del 06 sigue siendo cambio de nivel/pendiente de fecha desconocida en la trayectoria.
+No es una prueba de estabilidad de coeficientes ARMA ni usa el viejo SAR1 como base del forecast.
+La calibracion 06C conserva su auxiliar nula I(1) propia; el orden auxiliar no reemplaza al modelo del 05.
+Se mantienen algoritmo, muestra, semilla y alcance condicional del contraste autorizado.
+No se incorpora un quiebre automaticamente ni se traslada una fecha candidata a los outliers.

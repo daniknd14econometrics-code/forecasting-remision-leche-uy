@@ -1,0 +1,5 @@
+"especificacion","deterministico","criterio","kmax","k_elegido","en_limite","n_auxiliar","LB24_orientativo","LB36_orientativo","valores_p_finitos","avisos"
+"principal_AIC","Constante + tendencia + meses","AIC",24,1,FALSE,272,0.918108052971265,0.616159259261043,TRUE,""
+"principal_BIC","Constante + tendencia + meses","BIC",24,0,FALSE,273,0.760133603681987,0.42130042636242,TRUE,""
+"sin_meses_AIC","Constante + tendencia","AIC",24,22,FALSE,251,0.999118037148308,0.971032480305429,TRUE,""
+"sin_meses_BIC","Constante + tendencia","BIC",24,1,FALSE,272,0.140981723330096,0.0233270515978748,TRUE,""

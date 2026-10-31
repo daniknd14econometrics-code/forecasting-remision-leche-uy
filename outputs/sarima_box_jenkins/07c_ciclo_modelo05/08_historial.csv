@@ -1,0 +1,4 @@
+"paso","fecha","tipo","lambda","abs_lambda","incorporado","decision"
+1,2006-02-01,"TC",4.07026206542745,4.07026206542745,TRUE,"Incorporado provisionalmente; reestimacion conjunta"
+2,2004-04-01,"AO",-4.03935726644579,4.03935726644579,TRUE,"Incorporado provisionalmente; reestimacion conjunta"
+3,2003-05-01,"TC",-3.254795386213,3.254795386213,FALSE,"Maximo restante por debajo de C"

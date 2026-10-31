@@ -1,0 +1,21 @@
+Fundamento: capitulos 01, 03D y 04B; pocos candidatos, estimacion y diagnostico conjunto.
+Comparacion acotada y explicita: referencias, alternativas regulares basicas y ampliaciones mixtas; sin evaluacion predictiva.
+Los cortes de FAC/FACP no identifican inequivocamente un orden regular; ampliaciones tentativas.
+Se retoman AR1, AR2, MA1, MA2 y ARMA11 con SAR1/SMA1; se agregan ARMA21, ARMA12 y ARMA22 como ampliaciones.
+Se registran varios inicios de cada especificacion; los fallos no se ocultan ni se confunden con evidencia contra el orden.
+Referencia elegida en 05 y reestimada en 07C; no se sustituye por el viejo SAR puro.
+Los efectos son los detectados en esta corrida. No se exigen LS/AO ni fechas prefijadas.
+Si hay IO, su perfil se actualiza con los coeficientes de cada candidato; inferencia y ajuste son condicionales a ese procedimiento.
+Misma variable, muestra efectiva y regresores: AICc/BIC comparables dentro de esta lista.
+Sigma_innovacion es raiz del promedio de innovaciones al cuadrado: convencion comun con el auditor.
+Los errores estandar e intervalos son condicionales y aproximados tras seleccionar outliers.
+Las raices excluyen (1-L), pues describen la dinamica estacionaria de Delta log.
+No aplicar umbral universal a distancias entre raices ni a correlaciones entre estimadores.
+Ljung-Box descuenta p+q+P+Q. Es aproximado con regresores estimados, seleccion y dispersion variable.
+Los tres horizontes LB se leen conjuntamente con FAC/FACP; no elegir el p mas conveniente.
+TC mayo 2003 se conserva solo como seguimiento historico. Se informa si su fecha ya fue modelada en esta corrida.
+El seguimiento historico no impone la ausencia de TC ni sustituye el scan actualizado de 07C.
+La mayor dispersion temprana se conserva como diagnostico; no se introduce otro modelo de varianza.
+No se modifica muestra, d=1, D=0, ausencia de deriva ni fechas/tipos incorporados.
+No se declara modelo final automaticamente. Elegir con evidencia de parametros, raices y residuos.
+Si todos conservan autocorrelacion, no informar diagnostico aprobado ni que el menor AICc la resuelve.

@@ -1,0 +1,2 @@
+"candidatos_previstos","candidatos_estimados","candidatos_sin_ajuste","admisibles_numericos","sin_rechazo_LB_orientativo","decision_revisada","modelo_seleccionado","estado"
+18,18,0,18,0,TRUE,"ARMA21_SAR1_sin_deriva","Base provisional elegida; dependencia residual pendiente de revisar con efectos y ordenes"

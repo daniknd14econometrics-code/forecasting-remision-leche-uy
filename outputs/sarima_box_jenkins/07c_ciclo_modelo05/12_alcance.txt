@@ -1,0 +1,14 @@
+Modelo de partida elegido en 05: ARMA21_SAR1_sin_deriva
+Motivo de parada: Maximo restante por debajo de C
+Se conserva el detector clasico del capitulo/taller 04B; se generaliza el operador al ARMA elegido.
+El mismo filtro de innovaciones con parametros fijos se aplica a datos y firmas AO/IO/LS/TC.
+Se comprueba su reproduccion de las innovaciones; no se usa el filtro SAR puro anterior.
+Un maximo cada vez; reestimacion conjunta de AR/MA, meses y todos los efectos.
+El perfil IO usa el polinomio ARMA completo y se actualiza hasta cinco veces, como en el taller.
+Ninguna fecha ni tipo anterior se impone: el resultado puede tener cero, uno o varios efectos.
+Se mantienen C=3.5, delta TC=0.7, d=1/D=0, ausencia de deriva y muestra completa.
+Las fechas ya modeladas no compiten como eventos nuevos; no se reclasifican automaticamente.
+No se alteran datos observados. Las puntuaciones y Wald son condicionales, no p confirmatorios.
+Ljung-Box descuenta todos los parametros dinamicos p+q+P+Q.
+Un LS provisional no confirma el cambio estructural del bloque 06.
+El 08 revisara ordenes con los efectos que realmente surjan de esta corrida.

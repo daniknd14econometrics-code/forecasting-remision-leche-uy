@@ -1,0 +1,7 @@
+"caso","banda","ancho_banda","KPSS","critico_1","critico_5","critico_10","rechaza_estacionariedad_5pct","varianza_largo_plazo"
+"niveles_tendencia_meses","short",5,0.719947575183235,0.216,0.146,0.119,TRUE,0.0514234750743944
+"niveles_tendencia_meses","long",15,0.335018575792384,0.216,0.146,0.119,TRUE,0.110507920642135
+"niveles_constante_meses","short",5,4.03493972518005,0.739,0.463,0.347,TRUE,0.273274989828542
+"niveles_constante_meses","long",15,1.62762097685828,0.739,0.463,0.347,TRUE,0.677460003302331
+"diferencia_constante_meses","short",5,0.0233734479370053,0.739,0.463,0.347,FALSE,0.00179214236873565
+"diferencia_constante_meses","long",15,0.0437384227167794,0.739,0.463,0.347,FALSE,0.000957705919634689

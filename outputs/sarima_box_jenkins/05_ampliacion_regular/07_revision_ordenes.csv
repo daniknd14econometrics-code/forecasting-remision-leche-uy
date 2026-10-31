@@ -1,0 +1,19 @@
+"candidato","etapa","modelo_nivel","admisible_numerico","delta_AICc_vs_anual","delta_BIC_vs_anual","horizontes_LB_con_rechazo","sin_rechazo_LB_en_12_24_36","requiere_revision_residual"
+"SAR1_sin_deriva","Referencia","(0,1,0)(1,0,0)[12]",TRUE,0,0,3,FALSE,TRUE
+"SMA1_sin_deriva","Referencia","(0,1,0)(0,0,1)[12]",TRUE,0,0,3,FALSE,TRUE
+"AR1_SAR1_sin_deriva","Revision basica","(1,1,0)(1,0,0)[12]",TRUE,0.584709752665844,4.0204938490125,3,FALSE,TRUE
+"AR1_SMA1_sin_deriva","Revision basica","(1,1,0)(0,0,1)[12]",TRUE,0.234139495893373,3.66992359224002,3,FALSE,TRUE
+"AR2_SAR1_sin_deriva","Revision basica","(2,1,0)(1,0,0)[12]",TRUE,-0.395841852347644,6.45920999600355,3,FALSE,TRUE
+"AR2_SMA1_sin_deriva","Revision basica","(2,1,0)(0,0,1)[12]",TRUE,-1.01534640123816,5.83970544711303,3,FALSE,TRUE
+"MA1_SAR1_sin_deriva","Revision basica","(0,1,1)(1,0,0)[12]",TRUE,0.194439022141637,3.63022311848829,3,FALSE,TRUE
+"MA1_SMA1_sin_deriva","Revision basica","(0,1,1)(0,0,1)[12]",TRUE,-0.249025119141947,3.1867589772047,3,FALSE,TRUE
+"MA2_SAR1_sin_deriva","Revision basica","(0,1,2)(1,0,0)[12]",TRUE,0.278283767203334,7.13333561555453,3,FALSE,TRUE
+"MA2_SMA1_sin_deriva","Revision basica","(0,1,2)(0,0,1)[12]",TRUE,-0.236992620940896,6.6180592274103,3,FALSE,TRUE
+"ARMA11_SAR1_sin_deriva","Revision basica","(1,1,1)(1,0,0)[12]",TRUE,-4.31840301358909,2.5366488347621,3,FALSE,TRUE
+"ARMA11_SMA1_sin_deriva","Revision basica","(1,1,1)(0,0,1)[12]",TRUE,-3.78861283830895,3.06643901004225,3,FALSE,TRUE
+"ARMA21_SAR1_sin_deriva","Ampliacion mixta","(2,1,1)(1,0,0)[12]",TRUE,-10.1994556429688,0.0581620361424484,2,FALSE,TRUE
+"ARMA21_SMA1_sin_deriva","Ampliacion mixta","(2,1,1)(0,0,1)[12]",TRUE,-10.6716046019692,-0.41398692285793,2,FALSE,TRUE
+"ARMA12_SAR1_sin_deriva","Ampliacion mixta","(1,1,2)(1,0,0)[12]",TRUE,-9.75036161050434,0.507256068606921,2,FALSE,TRUE
+"ARMA12_SMA1_sin_deriva","Ampliacion mixta","(1,1,2)(0,0,1)[12]",TRUE,-10.191727418468,0.0658902606433003,2,FALSE,TRUE
+"ARMA22_SAR1_sin_deriva","Ampliacion mixta","(2,1,2)(1,0,0)[12]",TRUE,-7.97753642060513,5.66575680048868,2,FALSE,TRUE
+"ARMA22_SMA1_sin_deriva","Ampliacion mixta","(2,1,2)(0,0,1)[12]",TRUE,-20.4467011884989,-6.80340796740506,3,FALSE,TRUE

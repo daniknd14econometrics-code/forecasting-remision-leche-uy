@@ -1,0 +1,2 @@
+"modelo","modelo_nivel","AICc","BIC","sigma_innovacion","fitdf_LB","raiz_AR_minima","raiz_MA_minima","LB12","LB24","LB36"
+"Base elegida en 05, sin outliers","(2,1,1)(1,0,0)[12]",-961.294800095018,-904.948665467959,0.0418908630532676,4,1.13524207910598,1.10767183314177,0.142456456631339,0.015171712315167,0.0187278252725636

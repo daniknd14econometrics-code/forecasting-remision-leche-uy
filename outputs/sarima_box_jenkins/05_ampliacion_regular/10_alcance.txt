@@ -1,0 +1,11 @@
+Revision correctiva: el analisis anterior de dos ampliaciones no cubria suficientemente AR/MA regular.
+Se conservan referencias SAR1/SMA1 y se contrastan AR1, AR2, MA1, MA2 y ARMA11 con ambas.
+ARMA21, ARMA12 y ARMA22 son ampliaciones mixtas adicionales: su complejidad debe justificarse.
+El teorico orienta identificacion, estimacion y validacion; no exige esta lista en cualquier serie.
+Los mismos criterios se aplican a todas las alternativas. No hay ganador automatico.
+La ausencia de un corte claro o de un primer retardo grande no demuestra p=q=0.
+Ljung-Box orienta la revision; sus valores p no son confirmatorios tras comparar especificaciones.
+Sigma_innovacion se presenta como raiz del promedio de innovaciones al cuadrado, sin correccion de grados de libertad.
+FAC/FACP, precision, raices, cancelaciones y dispersion deben revisarse junto a AICc/BIC.
+No se selecciona un modelo ni se cambia automaticamente la base de los bloques posteriores.
+Al final se registra la decision provisional del 05 antes de ejecutar los siguientes bloques.

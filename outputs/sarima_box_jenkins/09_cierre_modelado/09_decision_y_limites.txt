@@ -1,0 +1,17 @@
+Decision revisada con los 18 candidatos estimados en 08. Se mantiene ARMA21+SAR1: ajuste admisible, cuatro parametros dinamicos e innovaciones sin rechazo LB en 12/24/36. ARMA21+SMA1 queda como contraste: mejora de IC minima, sin una superioridad predictiva demostrada. Las alternativas ARMA22 mejoran IC pero presentan factores AR/MA casi comunes y proximos al circulo unitario y rechazo LB a 12 meses; no se eligen como principal. La eleccion corresponde al desarrollo y diagnostico, no a una competencia predictiva fuera de muestra.
+x es log(remision_litros/dias_mes), una observacion por mes.
+El objeto ARMA se estimo sobre diff(x), con d=0 y D=0 internos: equivale a d=1 y D=0 originales.
+Los once contrastes mensuales describen cambios estacionales en diff(x); no confundirlos con efectos en niveles.
+Los perfiles TC/AO se definen en niveles y sus primeras diferencias se incluyen como regresores.
+TC usa delta=0.7 y decae desde febrero 2006; AO afecta abril 2004. Los datos observados no se sustituyen.
+No se incorpora cambio de trayectoria de 2011-2013: 06C no rechazo bajo su calibracion I(1) condicional.
+Ese resultado no demuestra estabilidad y depende del simulador nulo estimado.
+Ljung-Box no rechaza en los tres horizontes, pero no demuestra independencia ni varianza constante.
+Se conserva como limitacion la mayor dispersion residual del tramo temprano.
+Intervalos de coeficientes condicionales y aproximados tras seleccionar ordenes, fechas y tipos de outliers.
+No se repite deteccion ni se ajusta otro modelo en 09. Los 18 candidatos quedan en los resultados de 08.
+No se leyo el periodo posterior a septiembre 2025 ni se generaron pronosticos.
+La evaluacion predictiva y sus comparaciones con benchmarks pertenecen a la siguiente etapa del proyecto.
+Al pronosticar habra que construir regresores futuros, acumular diferencias y volver a litros respetando dias del mes.
+No interpretar exp(pronostico log) automaticamente como media predictiva en litros.
+La referencia auto inicial tiene arquitectura libre y no se mezcla con estos modelos en un ranking por IC.

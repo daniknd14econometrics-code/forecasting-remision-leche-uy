@@ -1,0 +1,4 @@
+"candidato","inicio","convergio","logLik","avisos","error"
+"ARMA21_SAR1_sin_deriva","por_defecto",TRUE,506.620349007064,"",""
+"ARMA21_SAR1_sin_deriva","AR_positivo",TRUE,506.620348869891,"",""
+"ARMA21_SAR1_sin_deriva","AR_negativo",TRUE,506.620348390844,"",""

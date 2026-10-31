@@ -1,0 +1,8 @@
+Auditor del taller 05B: solo selecciona ordenes estacionarios con arquitectura fijada.
+d=0/D=0 en Delta log equivale al d=1/D=0 original, no a eliminar la diferenciacion.
+Misma muestra efectiva, regresores, ausencia de deriva y maxima verosimilitud.
+Los coeficientes mensuales y de los efectos se reestiman con la dinamica automatica.
+AICc/BIC son comparables con los candidatos manuales de 08 bajo estos condicionamientos.
+No se escoge automaticamente el principal ni se hace evaluacion fuera de muestra.
+No se repite deteccion de outliers ni se modifica la muestra.
+Ljung-Box es aproximado tras estimacion, seleccion de efectos y dispersion variable.

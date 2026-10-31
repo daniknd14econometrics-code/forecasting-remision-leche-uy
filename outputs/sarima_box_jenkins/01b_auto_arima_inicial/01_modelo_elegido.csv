@@ -1,0 +1,2 @@
+"candidato","modelo_nivel","incluye_media","incluye_deriva","n_niveles","n_para_IC","parametros_con_varianza","matriz_cov_valida","raiz_AR_minima","raiz_MA_minima","AICc","BIC","sigma_innovacion","LB12","LB24","LB36","version_forecast","avisos"
+"auto_inicial_libre","(1,0,0)(0,1,1)[12]",FALSE,TRUE,285,273,4,TRUE,1.12570763285534,1.02851107253588,-925.700150982446,-911.41151753305,0.0421734553949914,0.0314041613301808,0.00850605449804642,0.0152919120944617,"9.0.2",""

@@ -1,0 +1,13 @@
+Calibracion bootstrap aproximada, condicional a una representacion I(1).
+No es una replica literal de un algoritmo publicado ni una prueba robusta I(0)/I(1).
+Estadistico y fechas candidatas identicos a los del bloque 06B.
+El modelo del contraste sigue siendo y ~ t, sin indicadores mensuales.
+El SIMULADOR si incluye meses estables y AR sobre diferencias, sin quiebre.
+AR auxiliar elegido una vez por AIC con muestra comun; no es orden del SARIMA.
+Inicializacion condicional: primer nivel y primeras p diferencias observadas.
+Wild bootstrap de innovaciones; la dependencia AR y su orden se mantienen fijos.
+No se remuestrean los meses ni se fija la fecha candidata observada.
+Ljung-Box orientativo con fitdf=0; no valida el tamano del contraste.
+Error Monte Carlo no incluye incertidumbre por especificacion del simulador.
+Las fechas simuladas bajo H0 NO son un intervalo de confianza del quiebre.
+No rechazar no demuestra ausencia de quiebre. No se modifican d, D ni la muestra.
