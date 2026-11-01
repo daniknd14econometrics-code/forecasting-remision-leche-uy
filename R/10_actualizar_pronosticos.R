@@ -7,7 +7,7 @@
 # Reporte actual: outputs/reportes/pronostico_actual.html (tambien CSV).
 # Historial: outputs/reportes/index.html. Reales y diferencias se actualizan.
 # Requiere SQLite preparada por 08 y el cierre del 06. No instala paquetes.
-# Documentacion: docs/R/10_actualizacion_pronosticos.md
+# Documentacion: docs/REPRODUCCION_Y_OPERACION.md
 # ============================================================================
 
 config10 <- list(

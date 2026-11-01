@@ -4,7 +4,7 @@
 # FORECAST_ESTADO_DIR: directorio de trabajo de la rama operacion.
 # FORECAST_INICIALIZAR=true: solo en la primera ejecucion manual sin estado.
 # No modifica ni ejecuta la seleccion del 06 ni el backtesting del 07.
-# Documentacion: docs/R/11_operacion_github_actions.md
+# Documentacion: docs/REPRODUCCION_Y_OPERACION.md
 # ============================================================================
 
 # 1. Copias exactas y rutas relativas -----------------------------------------

@@ -6,7 +6,7 @@
 # Crea forecast_ejecuciones y forecast_pronosticos, y comprueba su estructura.
 # Todavia no inserta la corrida del 07 ni genera nuevas predicciones.
 # No ejecuta 06/07 ni cambia las tablas de datos observados.
-# Explicacion: docs/sql/02_persistencia_pronosticos.md
+# Explicacion: docs/DATOS_Y_SQL.md
 # ============================================================================
 
 preparar_persistencia08 <- function(raiz = getwd()) {

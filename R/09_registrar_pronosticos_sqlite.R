@@ -5,7 +5,7 @@
 # Requiere las tablas creadas por el 08 y los archivos originales de esta corrida.
 # Una ejecucion y 12 pronosticos por modelo. No estima ni ejecuta 06/07.
 # Repetir una carga identica no duplica ni reemplaza registros.
-# Explicacion: docs/sql/02_persistencia_pronosticos.md
+# Explicacion: docs/DATOS_Y_SQL.md
 # ============================================================================
 
 registrar_pronosticos09 <- function(
