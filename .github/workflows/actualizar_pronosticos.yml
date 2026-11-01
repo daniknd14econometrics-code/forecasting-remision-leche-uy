@@ -67,7 +67,21 @@ jobs:
             exit 1
           fi
 
+      # Incidente de la corrida 41257750531: apt-get update quedo bloqueado.
+      # Se evita el selector de mirrors de Azure usando el archivo oficial por HTTPS.
+      # Valores de espera basados en actions/runner-images PR 14643.
+      # Solo se configura la maquina temporal; no se cambia el entorno local.
+      - name: Preparar descargas de Ubuntu con limites de espera
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          sudo sed -i 's|mirror+file:/etc/apt/apt-mirrors.txt|https://archive.ubuntu.com/ubuntu/|g; s|http://azure\.archive\.ubuntu\.com/ubuntu/|https://archive.ubuntu.com/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+          printf '%s\n' 'Acquire::Retries "1";' 'Acquire::http::Timeout "15";' 'Acquire::https::Timeout "15";' | sudo tee /etc/apt/apt.conf.d/99-forecast-network >/dev/null
+          apt-config dump Acquire::Retries Acquire::http::Timeout Acquire::https::Timeout
+          cat /etc/apt/sources.list.d/ubuntu.sources
+
       - name: Preparar R con la version del proyecto
+        timeout-minutes: 15
         uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
         with:
           r-version: '4.6.1'
