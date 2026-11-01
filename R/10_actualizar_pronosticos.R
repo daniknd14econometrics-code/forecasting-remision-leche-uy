@@ -475,6 +475,7 @@ op10_actualizar_tablas <- function(con, staging, ruta_sql) {
 # La presentacion se delega en 12; la consulta y los CSV mantienen su contrato.
 op10_generar_reportes <- function(con, raiz, emision_actual, carpeta_control) {
   sys.source(file.path(raiz, "R", "12_reportes_visuales.R"), envir = environment(op10_generar_reportes))
+  op12_preparar_compartir(raiz)
   seguimiento <- DBI::dbGetQuery(con, paste(
     "SELECT p.ejecucion_id, p.modelo, p.origen, p.fecha_objetivo, p.h, p.pred_media,",
     "p.inferior80, p.superior80, p.inferior95, p.superior95,",

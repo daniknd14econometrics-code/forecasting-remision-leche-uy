@@ -145,7 +145,7 @@ op11_guardar <- function(raiz, estado_dir, motor, resultado, metricas) {
   archivos <- sort(unique(gsub("\\\\", "/", archivos)))
   op11_copiar(raiz, file.path(estado_dir, "estado"), archivos)
   # -text evita conversiones CRLF/LF en los archivos que tienen huellas registradas.
-  writeLines(c("*.csv text eol=lf", "*.txt text eol=lf", "publico/** text eol=lf", "estado/** -text"),
+  writeLines(c("*.csv text eol=lf", "*.txt text eol=lf", "publico/** text eol=lf", "*.png -text", "estado/** -text"),
     file.path(estado_dir, ".gitattributes"))
   writeLines("estado_operativo_v1", file.path(estado_dir, "formato_estado.txt"))
   writeLines(unname(tools::md5sum(file.path(raiz, motor$config10$ruta_cierre))),

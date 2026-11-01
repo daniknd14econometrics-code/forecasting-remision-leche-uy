@@ -36,14 +36,43 @@ op12_css <- function() paste0('
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.chart [data-layer]{transition:none}}@media print{body{background:white}.masthead{background:white;color:var(--ink)}.brand{color:var(--ink)}.nav,.actions,.legend input{display:none}.panel,.kpis{break-inside:avoid}.chart{min-width:0}details{display:block}details>*{display:block!important}.wrap{max-width:none;padding:0}.footer{font-size:10px}}
 ')
 
-op12_pagina <- function(titulo, cuerpo, activo = "actual", prefijo = "", actualizado = "") {
+# Portada estable y metadatos para enlaces compartidos; no dependen de JavaScript.
+op12_preparar_compartir <- function(raiz) {
+  origen <- file.path(raiz, "assets", "portada-proyecto.png")
+  destino <- file.path(raiz, "outputs", "reportes", "assets", "portada-proyecto.png")
+  if (!file.exists(origen)) stop("Falta la portada para compartir: ", origen)
+  dir.create(dirname(destino), recursive = TRUE, showWarnings = FALSE)
+  if (!file.copy(origen, destino, overwrite = TRUE, copy.mode = FALSE) ||
+      !identical(unname(tools::md5sum(origen)), unname(tools::md5sum(destino))))
+    stop("No se pudo copiar sin cambios la portada para compartir.")
+  invisible(destino)
+}
+
+op12_pagina <- function(titulo, cuerpo, activo = "actual", prefijo = "", actualizado = "", ruta_publica = NULL) {
   destinos <- c(actual = "pronostico_actual.html", historial = "index.html", seguimiento = "metricas_operativas.html", historica = "evaluacion_historica.html")
   nombres <- c(actual = "Pronóstico actual", historial = "Emisiones", seguimiento = "Seguimiento real", historica = "Evaluación histórica")
+  base_publica <- "https://daniknd14econometrics-code.github.io/forecasting-remision-leche-uy/"
+  if (is.null(ruta_publica)) ruta_publica <- if (activo == "historial") "" else destinos[[activo]]
+  url_publica <- paste0(base_publica, ruta_publica)
+  titulo_compartir <- paste0(titulo, " · Remisión de leche en Uruguay")
+  descripcion <- "Pronósticos mensuales de remisión de leche en Uruguay: SARIMA, referencia estacional, intervalos y seguimiento de emisiones. Proyecto reproducible en R y SQL/SQLite, con datos públicos del INALE y actualización mediante GitHub Actions."
+  imagen <- paste0(base_publica, "assets/portada-proyecto.png")
+  metadatos <- paste0('<link rel="canonical" href="', op12_esc(url_publica), '">',
+    '<meta property="og:type" content="website"><meta property="og:locale" content="es_UY">',
+    '<meta property="og:site_name" content="Remisión de leche · Uruguay">',
+    '<meta property="og:title" content="', op12_esc(titulo_compartir), '">',
+    '<meta property="og:description" content="', op12_esc(descripcion), '">',
+    '<meta property="og:url" content="', op12_esc(url_publica), '">',
+    '<meta property="og:image" content="', imagen, '">',
+    '<meta property="og:image:secure_url" content="', imagen, '">',
+    '<meta property="og:image:type" content="image/png">',
+    '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">',
+    '<meta property="og:image:alt" content="Proyecto de pronóstico mensual de remisión de leche en Uruguay con R, SQL/SQLite y GitHub Actions.">')
   nav <- paste(vapply(names(destinos), function(k) paste0('<a ', if (k == activo) 'class="active" aria-current="page" ' else '',
     'href="', prefijo, destinos[[k]], '">', nombres[[k]], '</a>'), character(1)), collapse = "")
   paste0('<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
     '<meta name="description" content="Pronósticos mensuales de remisión de leche en Uruguay. SARIMA, referencia estacional, intervalos y seguimiento de emisiones con datos públicos del INALE.">',
-    '<title>', op12_esc(titulo), ' · Remisión Uruguay</title><style>', op12_css(), '</style></head><body>',
+    metadatos, '<title>', op12_esc(titulo), ' · Remisión Uruguay</title><style>', op12_css(), '</style></head><body>',
     '<a class="screenreader" href="#contenido">Saltar al contenido</a><header class="masthead"><div class="wrap"><a class="brand" href="', prefijo, 'index.html">',
     '<svg viewBox="0 0 44 32" aria-hidden="true"><path d="M2 24L10 18L17 23L25 7L33 13L42 2" fill="none" stroke="#dcecb6" stroke-width="3"/><path d="M2 31H43" stroke="#658a7d"/></svg>',
     '<span>Remisión de leche<small>Uruguay · Datos y pronósticos</small></span></a><div class="mastnote">Datos públicos del INALE<br>Actualización mensual automatizada</div></div></header>',
@@ -196,7 +225,8 @@ op12_reporte <- function(s, n, meta, corte, actualizado, paquete, prefijo = "", 
     '<details><summary>Ver diagnóstico del ajuste original</summary>', op12_diagnostico(paquete), '</details>',
     '<details><summary>Información original y límites de lectura</summary><p class="note">Cada emisión conserva la historia, el ajuste y los doce pronósticos con los que se produjo. El reporte añade los observados vigentes sin cambiar esas predicciones. Las revisiones pueden generar otra emisión desde el mismo origen: el identificador distingue las versiones. Los intervalos no incorporan incertidumbre de selección, parámetros ni futuros eventos desconocidos.</p>',
     '<div class="actions"><a class="button secondary" href="', carpeta, 'trayectoria_original.svg">Abrir gráfico original · SVG</a></div></details></section>')
-  op12_pagina('Pronóstico mensual', cuerpo, if (actual) 'actual' else 'historial', prefijo, actualizado)
+  op12_pagina('Pronóstico mensual', cuerpo, if (actual) 'actual' else 'historial', prefijo, actualizado,
+    ruta_publica = if (identical(prefijo, '../../')) paste0('emisiones/', id, '/reporte.html') else 'pronostico_actual.html')
 }
 
 # 4. Portada: resumen vigente y archivo consultable ---------------------------

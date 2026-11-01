@@ -52,3 +52,13 @@ Se comprobó en copias aisladas: caso actual sin errores evaluables, caso con un
 La preparación se probó con el runtime R 4.3.3 disponible para estas verificaciones. El entorno operativo del proyecto continúa siendo R 4.6.1 y su `renv.lock`; no se modifican sus dependencias. La ejecución y publicación de esta versión en ese entorno se verifican después de su commit mediante una corrida manual de Actions en `main`, con inicialización desmarcada y comprobación de `actualizar` y `publicar`.
 
 El modelo, los pronósticos emitidos y el calendario conservan su definición previa. La reselección periódica sigue pendiente.
+
+## Vista previa al compartir un enlace
+
+Todas las páginas incluyen metadatos Open Graph en el HTML inicial: título, descripción, URL pública canónica e imagen con URL HTTPS absoluta. La portada estable `assets/portada-proyecto.png` mide 1200 × 630 píxeles y pesa menos de 5 MB. No contiene datos mensuales que puedan quedar desactualizados. Su fuente vectorial se conserva en `assets/portada-proyecto.svg`.
+
+El módulo 12 copia esa imagen a `outputs/reportes/assets/` antes de generar las páginas. La copia recursiva del 11 la transporta a Pages; la regla `*.png -text` preserva sus bytes al guardar la rama operativa. Se verifica que la huella de la copia sea idéntica a la del original.
+
+Después del despliegue, [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) permite volver a consultar la URL y refrescar su caché. Luego puede ser necesario volver a agregar el enlace al perfil. La presencia de metadatos e imagen prepara el sitio para la extracción; el aspecto final depende de la sección de LinkedIn y debe comprobarse allí. No se presupone que cambien automáticamente las miniaturas ya guardadas.
+
+Referencia: [requisitos de LinkedIn para compartir una web](https://www.linkedin.com/help/linkedin/answer/a521928/).
