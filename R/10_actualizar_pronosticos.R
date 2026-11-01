@@ -472,68 +472,9 @@ op10_actualizar_tablas <- function(con, staging, ruta_sql) {
 }
 
 # 6B. Reportes de doce meses: conservar filas futuras y actualizar observados ---
-op10_html_reporte <- function(sarima, naive, meta, corte, actualizado,
-    enlace_indice = "index.html") {
-  escapar <- function(x) {
-    x <- gsub("&", "&amp;", as.character(x), fixed = TRUE)
-    x <- gsub("<", "&lt;", x, fixed = TRUE)
-    x <- gsub(">", "&gt;", x, fixed = TRUE)
-    gsub('"', "&quot;", x, fixed = TRUE)
-  }
-  numero <- function(x, digitos = 0L) {
-    if (is.na(x)) return("&mdash;")
-    formatC(x, format = "f", digits = digitos, big.mark = ".", decimal.mark = ",")
-  }
-  mes <- function(x) {
-    meses <- c("enero", "febrero", "marzo", "abril", "mayo", "junio",
-      "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
-    x <- as.Date(x)
-    paste(meses[as.integer(format(x, "%m"))], format(x, "%Y"))
-  }
-  tabla <- function(p) {
-    filas <- vapply(seq_len(nrow(p)), function(i) {
-      z <- p[i, ]
-      intervalo <- function(a, b) paste(numero(a), "&ndash;", numero(b))
-      celdas <- c(escapar(mes(z$fecha_objetivo)), z$h, numero(z$pronostico_litros),
-        numero(z$real_litros), numero(z$diferencia_litros),
-        if (is.na(z$diferencia_pct)) "&mdash;" else paste0(numero(z$diferencia_pct, 2L), "%"),
-        intervalo(z$inferior80, z$superior80), intervalo(z$inferior95, z$superior95),
-        paste0('<span class="estado ', if (is.na(z$real_litros)) "pendiente" else "observado", '">', escapar(z$estado), '</span>'))
-      paste0("<tr>", paste0("<td>", celdas, "</td>", collapse = ""), "</tr>")
-    }, character(1))
-    paste0('<div class="tabla"><table><thead><tr>', paste0("<th>",
-      c("Mes objetivo", "h", "Pronóstico (litros)", "Real (litros)", "Real − pronóstico",
-        "Diferencia (%)", "Intervalo 80%", "Intervalo 95%", "Estado"),
-      "</th>", collapse = ""), "</tr></thead><tbody>", paste(filas, collapse = "\n"), "</tbody></table></div>")
-  }
-  nav <- if (is.null(enlace_indice)) "" else paste0('<nav><a href="', escapar(enlace_indice), '">Consultar todas las emisiones</a></nav>')
-  paste0('<!doctype html><html lang="es"><head><meta charset="UTF-8">',
-    '<meta name="viewport" content="width=device-width,initial-scale=1"><title>Pronósticos de remisión de leche</title>',
-    '<style>body{margin:0;background:#f4f7f9;color:#162d36;font:15px/1.5 system-ui,Segoe UI,sans-serif}',
-    'main{max-width:1600px;margin:32px auto;padding:0 24px}header,.panel,details{background:white;border:1px solid #dce5e9;border-radius:12px;padding:22px;margin-bottom:20px}',
-    '.marca{color:#007c83;font-size:13px;font-weight:700;letter-spacing:.05em}h1{font-size:29px;line-height:1.2;margin:10px 0 14px}h2{font-size:20px;margin:0 0 8px}',
-    '.meta{color:#47616b;margin:5px 0}.resumen{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}.dato{background:#edf5f5;border-radius:8px;padding:8px 14px}',
-    '.tabla{overflow-x:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:13px;font-variant-numeric:tabular-nums}',
-    'th{background:#edf5f5;font-size:12px;color:#244d55}th,td{padding:12px 10px;border-bottom:1px solid #e6edef;text-align:right}th:first-child,td:first-child{text-align:left}',
-    'tbody tr:nth-child(even){background:#fafcfc}.estado{padding:3px 8px;border-radius:15px;font-size:12px}.pendiente{background:#f0f2f4;color:#53636c}.observado{background:#dff2eb;color:#176348}',
-    '.nota,footer{font-size:13px;color:#526973}code{overflow-wrap:anywhere}a{color:#006d75}nav{margin-top:16px}summary{cursor:pointer;font-weight:600}',
-    '@media(max-width:700px){main{padding:0 10px;margin:12px auto}header,.panel,details{padding:14px}h1{font-size:23px}}</style></head><body><main>',
-    '<header><div class="marca">REMISIÓN DE LECHE · URUGUAY</div><h1>Pronóstico y seguimiento de doce meses</h1>',
-    '<p class="meta">Pronóstico emitido con datos hasta <strong>', escapar(mes(meta$ultimo_dato)), '</strong>.</p>',
-    '<p class="meta">Observados disponibles hasta ', escapar(mes(corte)), ' · Seguimiento actualizado: ', escapar(actualizado), '.</p>',
-    '<p class="meta">Emisión: <code>', escapar(meta$ejecucion_id), '</code> · Generada: ', escapar(meta$fecha_ejecucion_utc), '.</p>',
-    '<div class="resumen"><span class="dato">12 meses completos</span><span class="dato">', sum(!is.na(sarima$real_litros)),
-    ' observados</span><span class="dato">', sum(is.na(sarima$real_litros)), ' pendientes</span></div>', nav, '</header>',
-    '<section class="panel"><h2>SARIMA seleccionado</h2><p class="nota">', escapar(meta$especificacion), '</p>', tabla(sarima),
-    '<p class="nota">Diferencia = real − pronóstico; positiva indica subpredicción. Diferencia (%) = 100 × diferencia / real. ',
-    'Las celdas pendientes se completan cuando llega el observado. Importes mostrados redondeados al litro; el CSV conserva la precisión.</p></section>',
-    '<details><summary>Ver referencia naïve estacional · doce meses</summary>', tabla(naive), '</details>',
-    '<footer>Fuente de observados: INALE, versión vigente en SQLite al actualizar este reporte. Los pronósticos originales se conservan. ',
-    'Si INALE revisa un observado, su diferencia puede cambiar. Los intervalos son condicionales al modelo; no incluyen futuros eventos desconocidos.</footer>',
-    '</main></body></html>')
-}
-
+# La presentacion se delega en 12; la consulta y los CSV mantienen su contrato.
 op10_generar_reportes <- function(con, raiz, emision_actual, carpeta_control) {
+  sys.source(file.path(raiz, "R", "12_reportes_visuales.R"), envir = environment(op10_generar_reportes))
   seguimiento <- DBI::dbGetQuery(con, paste(
     "SELECT p.ejecucion_id, p.modelo, p.origen, p.fecha_objetivo, p.h, p.pred_media,",
     "p.inferior80, p.superior80, p.inferior95, p.superior95,",
@@ -558,7 +499,7 @@ op10_generar_reportes <- function(con, raiz, emision_actual, carpeta_control) {
       estado = ifelse(is.na(z$observado), "Pendiente", "Observado"),
       origen = z$origen, ejecucion_id = z$ejecucion_id, stringsAsFactors = FALSE)
   }
-  enlaces <- character(nrow(emisiones)); actual <- NULL
+  actual <- NULL; paquete_actual <- NULL
   for (i in seq_len(nrow(emisiones))) {
     meta <- emisiones[i, ]; id <- meta$ejecucion_id
     if (!grepl("^[A-Za-z0-9_-]+$", id)) stop("Identificador de emision incompatible con el directorio de reportes.")
@@ -569,27 +510,28 @@ op10_generar_reportes <- function(con, raiz, emision_actual, carpeta_control) {
     carpeta <- file.path(directorio, "emisiones", id)
     dir.create(carpeta, recursive = TRUE, showWarnings = FALSE)
     op10_csv(sarima, carpeta, "sarima.csv"); op10_csv(naive, carpeta, "naive_estacional.csv")
-    writeLines(op10_html_reporte(sarima, naive, meta, corte, actualizado, "../../index.html"),
+    paquete <- op12_paquete(raiz, meta)
+    writeLines(op12_trayectoria(sarima, naive, paquete, seguimiento = FALSE),
+      file.path(carpeta, "trayectoria_original.svg"), useBytes = TRUE)
+    writeLines(op12_reporte(sarima, naive, meta, corte, actualizado, paquete,
+      prefijo = "../../", actual = id == emision_actual),
       file.path(carpeta, "reporte.html"), useBytes = TRUE)
-    enlaces[i] <- paste0('<li><a href="emisiones/', id, '/reporte.html">Origen ', meta$ultimo_dato,
-      ' · ', id, '</a>', if (id == emision_actual) ' <strong>· Actual</strong>' else '', '</li>')
     if (id == emision_actual) {
       actual <- list(sarima = sarima, naive = naive, meta = meta)
+      paquete_actual <- paquete
       op10_csv(sarima, directorio, "pronostico_actual.csv")
       op10_csv(naive, directorio, "naive_actual.csv")
       op10_csv(sarima, carpeta_control, "04_reporte_sarima_actual.csv")
-      writeLines(op10_html_reporte(sarima, naive, meta, corte, actualizado),
+      writeLines(op12_reporte(sarima, naive, meta, corte, actualizado, paquete),
         file.path(directorio, "pronostico_actual.html"), useBytes = TRUE)
-      writeLines(op10_html_reporte(sarima, naive, meta, corte, actualizado, "../../reportes/index.html"),
+      writeLines(op12_reporte(sarima, naive, meta, corte, actualizado, paquete, prefijo = "../../reportes/"),
         file.path(carpeta_control, "04_reporte_sarima_actual.html"), useBytes = TRUE)
     }
   }
-  writeLines(paste0('<!doctype html><html lang="es"><meta charset="UTF-8"><title>Emisiones de pronósticos</title>',
-    '<style>body{max-width:1100px;margin:40px auto;padding:0 20px;font:16px/1.8 system-ui;color:#162d36}a{color:#006d75}</style>',
-    '<h1>Emisiones de pronósticos</h1><p><a href="pronostico_actual.html">Abrir reporte actual</a></p>',
-    '<p>Cada enlace conserva doce meses por modelo y muestra los observados disponibles al actualizar el reporte.</p><ul>',
-    paste(enlaces, collapse = "\n"), '</ul><p>Seguimiento actualizado: ', actualizado, '</p></html>'),
+  writeLines(op12_indice(emisiones, emision_actual, actual, paquete_actual, corte, actualizado),
     file.path(directorio, "index.html"), useBytes = TRUE)
+  op12_metricas(con, raiz, actualizado)
+  op12_historica(raiz, actualizado)
   op10_csv(seguimiento, carpeta_control, "03_seguimiento_emitido_vs_observado.csv")
   list(seguimiento = seguimiento, actual = actual,
     ruta = file.path(directorio, "pronostico_actual.html"),

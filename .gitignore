@@ -5,3 +5,4 @@
 # Bases de datos generadas
 database/*.sqlite
 database/*.sqlite-*
+/outputs/vista_local_reporte/

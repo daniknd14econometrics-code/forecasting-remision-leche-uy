@@ -1,25 +1,18 @@
 # Dos caminos de mejora
 
-La versión actual integra datos públicos, SQL/SQLite, SARIMA, evaluación histórica, pronósticos, persistencia y actualización mediante Actions. Este documento plantea dos ampliaciones opcionales. No están implementadas ni se activan por su inclusión en el repositorio.
+La versión actual integra datos públicos, SQL/SQLite, SARIMA, evaluación histórica, pronósticos, persistencia y actualización mediante Actions. Este documento distingue la mejora visual ya implementada y la revisión periódica del modelo todavía propuesta. La segunda no se activa por su inclusión en el repositorio.
 
 ARIMAX se reserva para otro proyecto independiente, desarrollado desde cero.
 
 ## 1. Capa visual de Pages
 
-**Objetivo:** añadir gráficos que permitan comprender cada emisión y el desempeño acumulado, aprovechando los datos y ajustes ya archivados.
+La primera mejora visual está implementada en el módulo 12: portada, trayectoria e intervalos por emisión, diagnóstico del ajuste original, seguimiento con reales vigentes, archivo consultable y gráficos acumulados de error y cobertura con cantidades evaluables. El backtesting del 07 tiene una vista separada y fechada.
 
-| Contenido | Comportamiento propuesto |
-|---|---|
-| Trayectoria e intervalos por emisión | Crear un gráfico con cada nueva emisión y conservarlo asociado a su identificador. |
-| Diagnóstico del ajuste | Guardar residuos, FAC/FACP y otros diagnósticos junto al modelo que produjo la emisión. |
-| Seguimiento de emisiones anteriores | Incorporar observados sin recalcular ni sobrescribir sus pronósticos originales. |
-| Evaluación operativa acumulada | Graficar errores y cobertura por modelo/horizonte, indicando casos comunes y cantidades evaluables. |
+La presentación se probó en copias aisladas y en navegador; su publicación se verifica con una corrida de Actions tras incorporar los archivos. El alcance, los comandos y la validación se describen en [Reporte visual](REPORTE_VISUAL.md).
 
-Los gráficos históricos del 07 quedarían como referencia del estudio original. Sus MAE/RMSE y coberturas provienen de un backtesting con muchos orígenes, no de la precisión ya observada de la emisión inicial.
+Una consulta sin cambios conserva la emisión. Una revisión puede producir otra desde el mismo origen, por lo que se utiliza el identificador completo. La historia y el ajuste de cada emisión provienen de su artefacto original; los observados revisados pueden modificar el seguimiento, pero no los pronósticos guardados.
 
-Una consulta sin novedades no debería crear otra emisión. Una revisión de datos puede producir otra desde el mismo origen, por lo que el archivo gráfico debe identificarse por emisión y no solamente por mes. Los observados revisados pueden modificar el seguimiento, pero no los pronósticos guardados.
-
-La implementación requiere generar imágenes, conservarlas y ajustar los HTML y la copia de archivos que recibe Pages. Debe probarse una nueva emisión, el llenado de observados de la anterior, la repetición sin duplicados y el acceso al historial. El gráfico acumulado debe distinguir valores pendientes de errores cero.
+Como ampliaciones visuales opcionales quedan filtros para historiales extensos y mapas de error por mes objetivo cuando existan suficientes casos por celda. No son requisitos para la vista actual.
 
 ## 2. Revisión periódica del modelo
 
@@ -46,6 +39,6 @@ La ampliación se consideraría comprobada tras ensayar conservación del modelo
 
 ## Cómo retomarlos
 
-Los dos caminos pueden desarrollarse por separado. Antes de comenzar, revisar el estado real del repositorio y `operacion`, concretar el alcance y mantener pruebas y documentación junto con cada cambio. No se fija un plazo, presupuesto ni obligación de implementar ambas capas.
+La revisión del modelo puede desarrollarse independientemente de la presentación. Antes de comenzarla, revisar el estado real del repositorio y `operacion`, concretar el alcance y mantener pruebas y documentación junto con cada cambio. No se fija un plazo, presupuesto ni obligación de implementar ambas capas.
 
 Referencias metodológicas: Hyndman y Athanasopoulos, [ARIMA](https://otexts.com/fpp3/arima.html) y [diagnóstico y evaluación temporal](https://otexts.com/fpp3/toolbox.html). Estas fuentes no prescriben el calendario propuesto.

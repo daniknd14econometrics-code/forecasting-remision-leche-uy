@@ -40,7 +40,7 @@ La operación conserva SARIMA y naïve para comparar su desempeño posterior. No
 
 El script 10 consulta INALE. Si no cambian los datos y ya existe una trayectoria completa, conserva la emisión. Ante meses nuevos o revisiones de litros, reestima la misma especificación con toda la historia y registra los próximos doce meses.
 
-El workflow prepara R y `renv`, ejecuta el script 11, recupera y guarda SQLite con sus artefactos en la rama `operacion`, y publica HTML/CSV mediante Pages. Se consulta el día 1 de cada mes a las 09:17, zona `Europe/Madrid`, y se permite ejecución manual. Los scripts 06 y 07 no se repiten en cada ciclo.
+El workflow prepara R y `renv`, ejecuta el script 11, recupera y guarda SQLite con sus artefactos en la rama `operacion`, y publica HTML, CSV y gráficos SVG mediante Pages. El módulo 12 presenta trayectorias, intervalos, diagnósticos por emisión y seguimiento acumulado, separando la evaluación histórica de la operación real. Se consulta el día 1 de cada mes a las 09:17, zona `Europe/Madrid`, y se permite ejecución manual. Los scripts 06 y 07 no se repiten en cada ciclo.
 
 Dos ejecuciones manuales verificaron el arranque, la recuperación del estado sin duplicados y la publicación. La observación de los disparos del calendario y de las nuevas publicaciones de INALE forma parte del seguimiento operativo.
 
@@ -52,7 +52,8 @@ Dos ejecuciones manuales verificaron el arranque, la recuperación del estado si
 | [Metodología](docs/METODOLOGIA.md) | Identificación, selección, efectos, evaluación y limitaciones. |
 | [Resultados](docs/RESULTADOS.md) | Métricas completas, intervalos y artefactos. |
 | [Reproducción y operación](docs/REPRODUCCION_Y_OPERACION.md) | Entorno, comandos, actualización, Actions y recuperación. |
-| [Mejoras futuras](docs/MEJORAS_FUTURAS.md) | Visualización y revisión periódica del modelo, aún no implementadas. |
+| [Reporte visual](docs/REPORTE_VISUAL.md) | Páginas, gráficos, seguimiento por emisión y regeneración local. |
+| [Mejoras futuras](docs/MEJORAS_FUTURAS.md) | Revisión periódica del modelo y alcance de las mejoras visuales. |
 
 ## Estructura
 

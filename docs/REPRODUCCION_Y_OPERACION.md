@@ -116,9 +116,9 @@ El script 11 exige un checkout limpio sin SQLite y directorios separados prepara
 |---|---|
 | `main` | Código y evidencia archivada del desarrollo y evaluación. |
 | `operacion/estado/` | SQLite, originales y artefactos para continuar el historial; ruta dentro de esa rama. |
-| `operacion/publico/` | HTML/CSV preparados para Pages. |
+| `operacion/publico/` | HTML/CSV y gráficos SVG preparados para Pages. |
 | `operacion/ultima_comprobacion.csv` | Fecha de consulta, commit utilizado, identificador de Actions y resumen del ciclo. |
-| Pages | Reporte vigente, historial y métricas. |
+| Pages | Reporte vigente, historial, métricas y referencia histórica separada. |
 
 El commit del estado se guarda antes de publicar Pages. Si falla la publicación, la base puede estar actualizada mientras la web conserva el reporte anterior. No borrar ni reinicializar `operacion` para resolver ese caso.
 
@@ -128,7 +128,18 @@ La operación local y remota no se sincronizan entre sí automáticamente. Para 
 
 La programación puede sufrir demoras y, en repositorios públicos, deshabilitarse por inactividad según las reglas del servicio. Revisar la pestaña Actions y `ultima_comprobacion.csv`; la ausencia de una nueva emisión no demuestra por sí sola que se haya consultado la fuente.
 
-## 7. Mapa de scripts
+## 7. Presentación y regeneración local
+
+Los scripts 10 y 11 utilizan `R/12_reportes_visuales.R` para la presentación. No hay que ejecutar el 12 como un ciclo adicional ni cambiar el workflow. Para regenerar únicamente los reportes desde la base local existente, con conexión de solo lectura:
+
+```r
+source("R/12_reportes_visuales.R", encoding = "UTF-8")
+regenerar_reportes12()
+```
+
+Abrir `outputs/reportes/index.html`. La función no consulta INALE, estima ni registra nuevas emisiones. El detalle de las páginas, la historia original, los gráficos y los casos evaluables está en [Reporte visual](REPORTE_VISUAL.md). La base local y el estado remoto siguen siendo independientes.
+
+## 8. Mapa de scripts
 
 | Etapa | Scripts |
 |---|---|
@@ -139,5 +150,6 @@ La programación puede sufrir demoras y, en repositorios públicos, deshabilitar
 | Persistencia y registro inicial | 08–09 |
 | Operación local | 10 |
 | Recuperación y respaldo para Actions | 11 |
+| Presentación HTML/SVG y vista local de solo lectura | 12 |
 
 Los fundamentos se presentan en [Metodología](METODOLOGIA.md), las tablas en [Datos y SQL](DATOS_Y_SQL.md) y la evidencia en [Resultados](RESULTADOS.md).

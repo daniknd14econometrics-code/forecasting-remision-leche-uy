@@ -126,37 +126,11 @@ op11_inicializar <- function(raiz, motor) {
 
 # 6. Metricas del seguimiento real, distintas del backtesting del 07 -----------
 op11_metricas <- function(raiz) {
+  ambiente <- new.env(parent = globalenv())
+  sys.source(file.path(raiz, "R", "12_reportes_visuales.R"), envir = ambiente)
   con <- DBI::dbConnect(RSQLite::SQLite(), file.path(raiz, "database", "forecasting.sqlite"))
   on.exit(DBI::dbDisconnect(con), add = TRUE)
-  m <- DBI::dbGetQuery(con, paste(
-    "SELECT p.modelo, p.h, COUNT(a.remision_litros) AS n_errores,",
-    "AVG(ABS(a.remision_litros - p.pred_media)) AS MAE_litros,",
-    "AVG((a.remision_litros - p.pred_media) * (a.remision_litros - p.pred_media)) AS MSE_litros",
-    "FROM forecast_pronosticos p LEFT JOIN analitica_remision_mensual a ON a.fecha = p.fecha_objetivo",
-    "GROUP BY p.modelo, p.h ORDER BY p.modelo, p.h"))
-  if (nrow(m) != 24L) stop("Se requieren los doce horizontes de los dos modelos.")
-  m$RMSE_litros <- sqrt(m$MSE_litros); m$MSE_litros <- NULL
-  m$estado <- ifelse(m$n_errores == 0L, "Sin observaciones evaluables", "Con observaciones")
-  carpeta <- file.path(raiz, "outputs", "reportes")
-  utils::write.csv(m, file.path(carpeta, "metricas_operativas.csv"), row.names = FALSE, na = "", fileEncoding = "UTF-8")
-  numero <- function(x) ifelse(is.na(x), "Pendiente", format(round(x), big.mark = ".", decimal.mark = ",", scientific = FALSE, trim = TRUE))
-  filas <- paste0("<tr><td>", m$modelo, "</td><td>", m$h, "</td><td>", m$n_errores,
-    "</td><td>", numero(m$MAE_litros), "</td><td>", numero(m$RMSE_litros), "</td></tr>")
-  html <- paste0('<!doctype html><html lang="es"><meta charset="UTF-8"><title>Seguimiento predictivo real</title>',
-    '<style>body{max-width:1000px;margin:35px auto;padding:0 18px;font:16px/1.6 system-ui;color:#162d36}',
-    'table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #ddd;padding:8px;text-align:right}',
-    'th:first-child,td:first-child{text-align:left}</style><h1>Seguimiento predictivo real</h1>',
-    '<p><a href="index.html">Historial</a> · <a href="pronostico_actual.html">Reporte actual</a> · ',
-    '<a href="metricas_operativas.csv">Descargar CSV</a></p>',
-    '<p>MAE y RMSE en litros, por modelo y horizonte (1 a 12 meses). Solo se incluyen pronósticos registrados cuyo mes objetivo ya tiene un observado.</p>',
-    '<p>Sin observados, las métricas permanecen vacías; cero errores evaluables no significa error de predicción cero. ',
-    'Se cuentan emisiones: dos versiones emitidas para un mismo origen se conservan como pronósticos distintos. ',
-    'Los observados son la versión vigente del INALE; sus revisiones pueden cambiar estas métricas. ',
-    'Este seguimiento no incluye las predicciones retrospectivas del script 07.</p>',
-    '<table><thead><tr><th>Modelo</th><th>Horizonte</th><th>Errores evaluables</th><th>MAE</th><th>RMSE</th></tr></thead><tbody>',
-    paste(filas, collapse = "\n"), '</tbody></table></html>')
-  writeLines(html, file.path(carpeta, "metricas_operativas.html"), useBytes = TRUE)
-  m
+  ambiente$op12_calcular_metricas(con)$metricas
 }
 
 # 7. Guardar un estado completo y preparar exclusivamente los reportes publicos
@@ -183,11 +157,6 @@ op11_guardar <- function(raiz, estado_dir, motor, resultado, metricas) {
   dir.create(publico, showWarnings = FALSE)
   reportes <- list.files(file.path(raiz, "outputs", "reportes"), recursive = TRUE, full.names = FALSE)
   op11_copiar(file.path(raiz, "outputs", "reportes"), publico, reportes)
-  indice <- file.path(publico, "index.html")
-  html <- paste(readLines(indice, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
-  html <- sub("<h1>Emisiones de pronósticos</h1>", paste0('<h1>Emisiones de pronósticos</h1>',
-    '<p><a href="metricas_operativas.html">MAE y RMSE del seguimiento real</a></p>'), html, fixed = TRUE)
-  writeLines(html, indice, useBytes = TRUE)
   writeLines("", file.path(publico, ".nojekyll"))
   control <- data.frame(comprobacion_utc = format(Sys.time(), tz = "UTC", usetz = TRUE),
     commit_codigo = Sys.getenv("GITHUB_SHA", unset = "prueba_local"),
