@@ -1,7 +1,7 @@
 # Script 11 — Operación en GitHub Actions y continuidad del historial
 
 Fecha de preparación: 31 de octubre de 2026.
-Estado: código y pruebas técnicas preparados; ejecución real de Actions y publicación en Pages pendientes.
+Actualizado el 1 de noviembre de 2026. Estado: dos ejecuciones manuales de Actions y publicación en Pages correctas; recuperación de `operacion` sin inicializar ni duplicar comprobada. Primer disparo del calendario pendiente de observación.
 
 ## Qué resuelve
 
@@ -31,6 +31,9 @@ El workflow prepara dos directorios hermanos:
 Dentro de la rama `operacion`, el subdirectorio `estado/` contiene SQLite y los artefactos que necesita para continuar. El subdirectorio `publico/` contiene exclusivamente los HTML y CSV que se publican en Pages. La repetición del nombre `estado` se debe a que el directorio del ejecutor y la carpeta guardada en la rama tienen funciones diferentes.
 
 Las variables `FORECAST_ESTADO_DIR` y `FORECAST_INICIALIZAR` las establece el workflow. La primera es una ruta absoluta al directorio de la rama operativa. La segunda solo permite el arranque inicial, que el usuario debe indicar en la primera ejecución manual.
+
+
+El primer arranque no copia la SQLite de Windows, excluida de `main`. Crea una base nueva a partir del Excel publicado y registra exactamente los pronósticos archivados de `20261031_171120_23228`. Para el cierre verificado, eso reproduce los 297 meses y la única emisión que había en la base local después del 10. No busca automáticamente cualquier corrida local más reciente: el arranque está anclado expresamente a esa emisión. A partir de la siguiente ejecución recupera la SQLite guardada en `operacion`, con todo su historial. La recuperación valida integridad y correspondencia de archivos; no implica una nueva selección estadística.
 
 ## Entradas y salidas
 
@@ -411,9 +414,21 @@ Pruebas realizadas en un entorno temporal, separado del repositorio del usuario:
 | Ejecución sobre un directorio con SQLite | Se detiene; no sobrescribe la base local |
 | Commit y clon Git locales, con `core.autocrlf=true` y un archivo CRLF | Conserva todas las huellas; la recuperación posterior no agrega emisiones |
 
-El mes simulado y las bases de prueba no se incluyen en la entrega ni se publican. La prueba del núcleo R se hizo con el runtime técnico disponible (R 4.3.3 y forecast 8.21.1); el workflow prepara R 4.6.1 y las versiones de `renv.lock`. La compatibilidad exacta de ese entorno remoto deberá confirmarse en la primera ejecución real.
+El mes simulado y las bases de prueba no se incluyen en la entrega ni se publican. La prueba del núcleo R se hizo con el runtime técnico disponible (R 4.3.3 y forecast 8.21.1); el workflow prepara R 4.6.1 y las versiones de `renv.lock`. La compatibilidad operativa del entorno remoto se confirmó después en las dos ejecuciones manuales descritas abajo, con R 4.6.1 y restauración de renv correcta.
 
-Se comprobó la lectura del YAML y la sintaxis bash de todos sus pasos. Eso no sustituye la validación del servicio GitHub Actions, la restauración remota de paquetes, la descarga desde INALE en ese ejecutor ni el despliegue en Pages. Esas verificaciones siguen pendientes.
+Verificación del 1 de noviembre de 2026, con código `bb559f0`:
+
+| Ejecución de Actions | Resultado | Evidencia |
+|---|---|---|
+| [41257750531](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41257750531) | Cancelada a los 45 minutos | Bloqueo en `apt-get update`, durante la preparación de R; no ejecutó el ciclo R ni escribió estado remoto. |
+| [41262543730](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262543730) | `actualizar` y `publicar` correctos | Inicialización explícita desde los archivos publicados; 297 meses, una emisión y 24 pronósticos; sin novedades de INALE. |
+| [41262927931](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262927931) | `actualizar` y `publicar` correctos | `FORECAST_INICIALIZAR=false`; recuperó `operacion`, conservó la misma emisión y 24 pronósticos, sin reestimar ni duplicar. |
+
+La primera ejecución correcta guardó `operacion` en `a4327b1`; la segunda avanzó a `6ea765f`. Su control quedó en `ultima_comprobacion.csv`, a las 01:54:38 UTC del 1 de noviembre de 2026 (02:54:38 en Madrid): origen septiembre de 2026, 297 meses, emisión `20261031_171120_23228`, cero meses nuevos, cero revisiones y cero errores evaluables. Son consultas reales a INALE; no se añadieron meses simulados al estado publicado.
+
+Daniel abrió el reporte público, el historial y las métricas y aportó capturas. Los reales y las diferencias continúan pendientes porque no se dispone de observados para octubre de 2026 en adelante. MAE y RMSE pendientes no equivalen a errores cero.
+
+El calendario mensual está configurado para el día 1 a las 09:17, zona `Europe/Madrid`. Estas comprobaciones fueron manuales: el primer disparo programado y la primera actualización con nuevos datos reales permanecen pendientes de observación.
 
 ## Límites y recuperación
 

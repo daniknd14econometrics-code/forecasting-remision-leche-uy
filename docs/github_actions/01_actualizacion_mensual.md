@@ -1,6 +1,6 @@
 # GitHub Actions 01 — Consulta mensual, persistencia y reporte público
 
-Preparado el 31 de octubre de 2026. Estado inicial de este documento: código preparado y probado técnicamente; activación y ejecución real pendientes. No se da por concluida la automatización hasta comprobarla en GitHub.
+Preparado el 31 de octubre y actualizado el 1 de noviembre de 2026. Arranque, recuperación sin duplicados y publicación en Pages comprobados en dos ejecuciones manuales reales. El primer disparo mensual programado permanece pendiente de observación.
 
 ## 1. Decisiones de esta etapa
 
@@ -105,7 +105,21 @@ jobs:
             exit 1
           fi
 
+      # Incidente de la corrida 41257750531: apt-get update quedo bloqueado.
+      # Se evita el selector de mirrors de Azure usando el archivo oficial por HTTPS.
+      # Valores de espera basados en actions/runner-images PR 14643.
+      # Solo se configura la maquina temporal; no se cambia el entorno local.
+      - name: Preparar descargas de Ubuntu con limites de espera
+        timeout-minutes: 2
+        run: |
+          set -euo pipefail
+          sudo sed -i 's|mirror+file:/etc/apt/apt-mirrors.txt|https://archive.ubuntu.com/ubuntu/|g; s|http://azure\.archive\.ubuntu\.com/ubuntu/|https://archive.ubuntu.com/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+          printf '%s\n' 'Acquire::Retries "1";' 'Acquire::http::Timeout "15";' 'Acquire::https::Timeout "15";' | sudo tee /etc/apt/apt.conf.d/99-forecast-network >/dev/null
+          apt-config dump Acquire::Retries Acquire::http::Timeout Acquire::https::Timeout
+          cat /etc/apt/sources.list.d/ubuntu.sources
+
       - name: Preparar R con la version del proyecto
+        timeout-minutes: 15
         uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
         with:
           r-version: '4.6.1'
@@ -189,11 +203,24 @@ La acción de checkout descarga el código. Se fija una revisión concreta de ca
 
 Si ya existe, se clona. Si hay un error de conexión, no se interpreta como pérdida del historial y no se arranca otra base. No se utiliza `push --force`.
 
+### Preparar las descargas de Ubuntu y limitar las esperas
+
+La primera prueba se bloqueó dentro de `apt-get update`, antes del ciclo R, y alcanzó el límite general de 45 minutos. El workflow corregido conserva Ubuntu 24.04 y prepara su gestor de paquetes antes de instalar R:
+
+- `sed -i` sustituye en `ubuntu.sources` el selector `mirror+file:/etc/apt/apt-mirrors.txt` y la dirección directa de Azure por `https://archive.ubuntu.com/ubuntu/`. Se usa el archivo oficial de Ubuntu por HTTPS; las claves de firma de los paquetes permanecen vigentes.
+- `printf` y `sudo tee` escriben en el ejecutor temporal `Acquire::Retries "1"`, `Acquire::http::Timeout "15"` y `Acquire::https::Timeout "15"`. Es un reintento y 15 segundos de espera de conexión/inactividad, no 15 segundos para descargar el archivo completo. Estos valores siguen la corrección de los mantenedores de las imágenes (PR 14643).
+- `apt-config dump` muestra la configuración efectiva y `cat` deja registradas las fuentes utilizadas. Es evidencia para diagnosticar otra demora.
+- El paso de configuración tiene un máximo de dos minutos y la preparación completa de R, 15. El límite general del trabajo permanece en 45 minutos. Limitar tiempo no garantiza disponibilidad de los repositorios; permite fallar de forma visible.
+
+La sustitución evita el camino de descarga que quedó atascado en esta ejecución. Puede eliminar la alternativa entre mirrors de ese selector, por lo que se trata de una solución localizada para este incidente, no de una garantía universal de red. Si también falla el archivo oficial, se revisa el registro en vez de aumentar indefinidamente las esperas. El cambio solo se aplica a la máquina temporal de Actions.
+
+La siguiente prueba preparó R en 50 segundos y terminó correctamente. Esa observación verifica el resultado operativo de la corrección; por sí sola no aísla causalmente cada cambio de configuración ni garantiza que no existan interrupciones futuras.
+
 ### Restaurar R y renv
 
 Se prepara R 4.6.1, la versión registrada en el proyecto, y se restauran las dependencias de `codigo/renv.lock` mediante las acciones de r-lib. La caché sirve para reducir descargas posteriores; perderla no debe causar pérdida de datos.
 
-No se modifica `renv.lock` para instalar otra versión de forecast o cambiar los resultados. La primera ejecución remota debe confirmar que las versiones registradas se restauran correctamente en Linux. Si falla una dependencia, se estudia ese error concreto.
+No se modifica `renv.lock` para instalar otra versión de forecast o cambiar los resultados. La primera ejecución remota correcta restauró el entorno y ejecutó 11/10; la segunda repitió el flujo recuperando el estado. Si una ejecución posterior falla por una dependencia, se estudia ese error concreto.
 
 ### Ejecutar el script 11
 
@@ -216,6 +243,8 @@ El paquete de Pages incluye únicamente `estado/publico`, en el directorio del e
 Se confirma primero el estado y después se publica la web. Si Pages falla, el estado puede haber quedado guardado y la web seguir mostrando la versión anterior. Revisar ambos trabajos, no solo el primero.
 
 ## 5. Activación guiada
+
+**Activación ya realizada.** El recorrido siguiente queda como referencia de instalación. La rama `operacion` ya existe; las consultas posteriores se hacen con inicialización desmarcada. Para usar una corrección recién publicada, iniciar un nuevo `Run workflow` desde `main`: repetir una ejecución antigua puede reutilizar su código anterior.
 
 Este es el recorrido completo de referencia. Durante el trabajo con la IA se ejecuta una unidad por vez y se revisa la salida antes de continuar.
 
@@ -289,11 +318,25 @@ Los ejecutores estándar de Actions para repositorios públicos y Pages están d
 | Se quiere continuar localmente desde el estado remoto | Recuperar el conjunto del manifiesto, no solo SQLite, en una copia preparada para ello |
 | Se modificó la especificación del 06 | Preparar una migración y versión explícitas antes de continuar con ese nuevo cierre |
 
-## 8. Evidencia al preparar esta entrega
+## 8. Evidencia técnica y ejecución real
 
 Se verificaron el arranque R con los archivos reales iniciales, la recuperación, un mes adicional simulado en un entorno temporal, la conservación de las predicciones, las métricas exactas de ese ejemplo y el rechazo de estados incompletos. También se verificó un commit/clon Git local con conservación de huellas, la lectura del YAML y la sintaxis bash.
 
-La prueba real de Actions, el despliegue web y el primer disparo mensual aún no se han observado. Su resultado se documentará con la evidencia del repositorio. Los datos simulados usados para las pruebas no están incluidos en esta entrega.
+Verificación del 1 de noviembre de 2026, con código `bb559f0`:
+
+| Ejecución de Actions | Resultado | Evidencia |
+|---|---|---|
+| [41257750531](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41257750531) | Cancelada a los 45 minutos | Bloqueo en `apt-get update`, durante la preparación de R; no ejecutó el ciclo R ni escribió estado remoto. |
+| [41262543730](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262543730) | `actualizar` y `publicar` correctos | Inicialización explícita desde los archivos publicados; 297 meses, una emisión y 24 pronósticos; sin novedades de INALE. |
+| [41262927931](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262927931) | `actualizar` y `publicar` correctos | `FORECAST_INICIALIZAR=false`; recuperó `operacion`, conservó la misma emisión y 24 pronósticos, sin reestimar ni duplicar. |
+
+La primera ejecución correcta guardó `operacion` en `a4327b1`; la segunda avanzó a `6ea765f`. Su control quedó en `ultima_comprobacion.csv`, a las 01:54:38 UTC del 1 de noviembre de 2026 (02:54:38 en Madrid): origen septiembre de 2026, 297 meses, emisión `20261031_171120_23228`, cero meses nuevos, cero revisiones y cero errores evaluables. Son consultas reales a INALE; no se añadieron meses simulados al estado publicado.
+
+Daniel abrió el reporte público, el historial y las métricas y aportó capturas. Los reales y las diferencias continúan pendientes porque no se dispone de observados para octubre de 2026 en adelante. MAE y RMSE pendientes no equivalen a errores cero.
+
+El calendario mensual está configurado para el día 1 a las 09:17, zona `Europe/Madrid`. Estas comprobaciones fueron manuales: el primer disparo programado y la primera actualización con nuevos datos reales permanecen pendientes de observación.
+
+Los datos simulados usados en las pruebas temporales no se incorporaron al estado remoto.
 
 ## 9. Fuentes oficiales consultadas
 
@@ -306,3 +349,6 @@ La prueba real de Actions, el despliegue web y el primer disparo mensual aún no
 - Publicación mediante workflow: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
 - Restauración de renv: https://github.com/r-lib/actions/tree/v2/setup-renv
 - Acciones oficiales fijadas: https://github.com/actions/checkout/releases/tag/v7.0.1 · https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0 · https://github.com/actions/deploy-pages/releases/tag/v5.0.1
+
+- Incidente de descargas Ubuntu: https://github.com/actions/runner-images/issues/14594
+- Corrección de reintentos y esperas en las imágenes: https://github.com/actions/runner-images/pull/14643

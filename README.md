@@ -2,11 +2,11 @@
 
 Proyecto en R para construir, evaluar y actualizar pronósticos de la remisión mensual de leche a plantas industriales en Uruguay, con datos públicos del Instituto Nacional de la Leche (INALE).
 
-Integra descarga y preparación de datos, SQL/SQLite, modelado SARIMA, evaluación predictiva histórica, pronósticos a doce meses, documentación pedagógica y control de versiones con Git/GitHub. El ciclo local de actualización está implementado y se comprobó con la fuente pública sin cambios; su publicación y GitHub Actions son los siguientes pasos.
+Integra descarga y preparación de datos, SQL/SQLite, modelado SARIMA, evaluación predictiva histórica, pronósticos a doce meses, documentación pedagógica y control de versiones con Git/GitHub. El ciclo local y su ejecución en GitHub Actions están implementados. Dos ejecuciones remotas correctas comprobaron el arranque inicial y la recuperación del estado sin duplicados; los reportes están publicados en GitHub Pages.
 
 ## Estado actual
 
-Actualización: 31 de octubre de 2026.
+Actualización: 1 de noviembre de 2026.
 
 | Componente | Estado |
 |---|---|
@@ -24,13 +24,14 @@ Actualización: 31 de octubre de 2026.
 | Actualización con nuevos meses o revisiones | Probada en base temporal separada; aún no llegó un mes nuevo real durante la comprobación local. |
 | Seguimiento inicial de errores | Consulta por ejecución, origen y horizonte implementada; cero errores observables en el corte actual. |
 | Reporte operativo de doce meses | HTML/CSV actual e historial por emisión generados; doce filas y reales/diferencias pendientes comprobados en la consola local. |
-| GitHub Actions | Pendiente. |
+| GitHub Actions y persistencia remota | Dos ejecuciones manuales correctas; estado guardado y recuperado en `operacion`. Calendario mensual configurado; primer disparo programado pendiente de observación. |
+| Reportes públicos y métricas | Pages publicado; reporte, historial y MAE/RMSE por horizonte abiertos por Daniel. |
 
-El modelado y la evaluación se publicaron en [e98ed61](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/e98ed61edea7f7ee3bffbbb11b12378276e57da6), la corrección documental en [dfbbd31](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/dfbbd31d6311bf9050d20d7c35456fc1d6b552ed) y la persistencia 08/09 en [38b950d](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/38b950d21e922f4012898bb1882c5b3022754ff5). En este último cierre se confirmó árbol local limpio, `0 0` tras `fetch` y el mismo commit en `main` de GitHub. La publicación del ciclo 10 y esta actualización documental está pendiente de su propia comprobación.
+El modelado y la evaluación se publicaron en [e98ed61](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/e98ed61edea7f7ee3bffbbb11b12378276e57da6), la corrección documental en [dfbbd31](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/dfbbd31d6311bf9050d20d7c35456fc1d6b552ed) y la persistencia 08/09 en [38b950d](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/commit/38b950d21e922f4012898bb1882c5b3022754ff5). En este último cierre se confirmó árbol local limpio, `0 0` tras `fetch` y el mismo commit en `main` de GitHub. El ciclo 10 se publicó en `f667dfc`; la automatización, en `a3c6a4c`; y la corrección de las descargas de Ubuntu, en `bb559f0`. Daniel confirmó este último push, árbol limpio y `0 0`. Las ejecuciones [41262543730](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262543730) y [41262927931](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262927931) terminaron con ambos trabajos correctos. Esta actualización documental queda preparada para su propio commit y push.
 
 ## Objetivo del proyecto completo
 
-Construir un flujo reproducible que permita obtener datos del INALE, conservar cada descarga original fechada, preparar la información con R y SQL, estimar y diagnosticar modelos, evaluar sus pronósticos respetando el orden temporal, producir nuevas predicciones y registrar resultados e historial de ejecuciones. Una vez comprobado el proceso local, se incorporará su ejecución mediante GitHub Actions.
+Construir un flujo reproducible que permita obtener datos del INALE, conservar cada descarga original fechada, preparar la información con R y SQL, estimar y diagnosticar modelos, evaluar sus pronósticos respetando el orden temporal, producir nuevas predicciones y registrar resultados e historial de ejecuciones. El ciclo operativo se ejecuta mediante GitHub Actions y conserva el estado entre consultas en la rama `operacion`.
 
 La primera etapa se concentra en SARIMA para una serie mensual. Queda abierta una extensión ARIMAX con precio al productor y precipitaciones, en este proyecto o en otro; no se presupone que mejore los pronósticos ni se exige para cerrar esta etapa. Machine learning, datos sintéticos y nuevas aplicaciones no forman parte de este desarrollo inicial.
 
@@ -101,7 +102,7 @@ outputs/reportes/pronostico_actual.html
 
 Abrir ese archivo local en el navegador para consultar las doce filas del SARIMA: fecha objetivo, horizonte, pronóstico, intervalos, real, diferencia y estado. Los campos reales/diferencias permanecen pendientes hasta que exista el observado. El CSV equivalente es `outputs/reportes/pronostico_actual.csv`; `outputs/reportes/index.html` permite seguir cada emisión anterior. Los reportes se actualizan en cada ciclo, conservando el pronóstico original. Al llegar otro mes se completa el seguimiento de emisiones anteriores y el reporte actual pasa a la nueva trayectoria.
 
-Daniel ejecutó esta versión: la consola mostró octubre de 2026–septiembre de 2027, doce filas pendientes, las rutas de reportes y los mismos totales 1/24. Su publicación continúa pendiente del cierre Git del 10.
+Daniel ejecutó esta versión: la consola mostró octubre de 2026–septiembre de 2027, doce filas pendientes, las rutas de reportes y los mismos totales 1/24. La publicación del 10 se confirmó en `f667dfc`; la automatización y Pages se comprobaron posteriormente en dos ejecuciones manuales correctas.
 
 ## Scripts y conexión entre etapas
 
@@ -117,6 +118,8 @@ Daniel ejecutó esta versión: la consola mostró octubre de 2026–septiembre d
 | `R/08_preparar_persistencia_sqlite.R` | Creación y comprobación de las dos tablas de ejecuciones y pronósticos. |
 | `R/09_registrar_pronosticos_sqlite.R` | Registro transaccional de la corrida revisada del 07; repetición sin duplicados y comprobación de las trayectorias completas. |
 | `R/10_actualizar_pronosticos.R` | Ciclo local: comprobar INALE, detectar cambios, actualizar datos, reestimar el mismo modelo cuando corresponde y registrar doce meses completos. |
+| `R/11_operacion_github_actions.R` | Recuperar el estado operativo, ejecutar el ciclo 10, calcular métricas y preparar el respaldo para Actions. |
+| `.github/workflows/actualizar_pronosticos.yml` | Preparar Ubuntu/R/renv, ejecutar 11, guardar `operacion` y publicar los reportes en Pages. |
 
 Aunque el nombre histórico del archivo 06 contiene “evaluar”, su versión actual compara ajuste y diagnósticos dentro del desarrollo. No ejecuta la evaluación predictiva fuera de muestra del modelo cerrado. Las salidas del antiguo recorrido `sarima_base` y backtesting se conservaron localmente fuera del repositorio para no mezclarlas con las actuales.
 
@@ -169,7 +172,7 @@ source("R/10_actualizar_pronosticos.R", encoding = "UTF-8")
 
 El 10 comprueba la fuente en cada ejecución. Si reconoce una emisión completa con la misma historia y cierre, no reestima ni añade otra. Si llegan meses o revisiones de litros, utiliza toda la historia desde enero de 2002 para reestimar coeficientes de la especificación cerrada y generar los siguientes doce meses. Conserva las emisiones anteriores. El 06 permanece como desarrollo de la especificación y el 07 como evaluación histórica; no se ejecutan en cada ciclo operativo.
 
-Cada comprobación deja evidencia en `outputs/operacion_mensual/`. Esto no constituye todavía una ejecución programada en GitHub Actions ni resuelve automáticamente la persistencia entre sus ejecutores temporales.
+Cada comprobación local deja evidencia en `outputs/operacion_mensual/`. En GitHub, el workflow recupera SQLite y sus artefactos desde `operacion`, ejecuta el 11 y guarda el estado completo antes de publicar Pages. Las ejecuciones remotas no actualizan automáticamente la SQLite de tu computadora. Para una consulta manual en Actions se utiliza `main` y se deja desmarcada la inicialización: la rama operativa ya existe. No ejecutar el 11 en la sesión local habitual.
 
 ## Documentación de estudio
 
@@ -186,13 +189,22 @@ La explicación acompaña cada unidad ejecutada: objetivo, código o comandos, s
 - [Registro Git del cierre de persistencia](docs/git/06_persistencia_pronosticos_sincronizacion.md).
 - [Ciclo local de actualización del script 10](docs/R/10_actualizacion_pronosticos.md).
 - [Registro Git del ciclo local](docs/git/07_actualizacion_local_sincronizacion.md).
+- [Operación del script 11](docs/R/11_operacion_github_actions.md).
+- [Workflow, calendario, Pages y evidencia real](docs/github_actions/01_actualizacion_mensual.md).
+- [Registro Git de la automatización](docs/git/08_automatizacion_sincronizacion.md).
 - [Estado detallado y siguiente paso](docs/ESTADO_DEL_PROYECTO.md).
 
 El flujo de trabajo se mantiene: definir → ejecutar → comprobar → documentar → guardar y sincronizar → continuar.
 
 ## Próxima etapa
 
-Publicar el ciclo local comprobado y configurar GitHub Actions, resolviendo antes dónde se conservan SQLite y los artefactos entre ejecuciones. Después se verificará una ejecución real del workflow y se completarán el seguimiento acumulado de errores y la reproducción final. El [estado del proyecto](docs/ESTADO_DEL_PROYECTO.md) separa lo completado, los ensayos temporales y las comprobaciones pendientes.
+La implementación operativa y la continuidad entre ejecutores están comprobadas en dos ejecuciones manuales de Actions. El cierre documental se prepara para publicar; el primer disparo del calendario y el primer mes nuevo real se verificarán cuando ocurran, sin presentarlos como pruebas ya realizadas.
+
+- [Reporte de doce meses](https://daniknd14econometrics-code.github.io/forecasting-remision-leche-uy/pronostico_actual.html).
+- [Historial de emisiones](https://daniknd14econometrics-code.github.io/forecasting-remision-leche-uy/).
+- [MAE y RMSE del seguimiento real](https://daniknd14econometrics-code.github.io/forecasting-remision-leche-uy/metricas_operativas.html).
+
+El seguimiento conserva SARIMA y naïve. La consulta programada es mensual, el día 1 a las 09:17 de Madrid; puede ejecutarse manualmente si INALE publica después de esa fecha. Las métricas tienen cero observaciones evaluables en el corte verificado. La expansión con datos nuevos y revisiones se ensayó previamente en una base temporal; aún no ha ocurrido con un nuevo dato real en Actions.
 
 Los materiales originales orientan la metodología; no se publican aquí sus bases internas ni se trasladan automáticamente sus fechas, coeficientes, ponderaciones o conclusiones al caso nacional del INALE.
 

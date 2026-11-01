@@ -1,6 +1,6 @@
 # Git 08 — Preparación y sincronización de la automatización mensual
 
-Fecha de preparación: 31 de octubre de 2026.
+Fecha de preparación: 31 de octubre de 2026. Actualización de evidencia: 1 de noviembre de 2026.
 
 ## 1. Punto de partida confirmado
 
@@ -62,7 +62,7 @@ Punto de control: comunicar el resumen de archivos preparados antes de hacer el 
 ## 5. Commit y publicación, tras revisar el punto anterior
 
 ```bat
-git commit -m "Add monthly GitHub Actions workflow and persistent forecast state"
+git commit -m "Add monthly GitHub Actions automation and persistent forecast state"
 git push origin main
 git fetch origin
 git status --short --branch
@@ -70,7 +70,7 @@ git rev-list --left-right --count HEAD...origin/main
 git log -1 --oneline
 ```
 
-Verificar push correcto, árbol limpio y `0 0`. El SHA de este commit todavía no se conoce al escribir este documento; no se inventa ni se considera ejecutado.
+Daniel ejecutó estos comandos y confirmó push correcto, árbol limpio y `0 0`. El commit resultante fue `a3c6a4c`. La corrección posterior del workflow se publicó en `bb559f0`, también con sincronización comprobada.
 
 El workflow no se dispara por este push. Se habilita Pages y se hace el primer arranque manual siguiendo la guía de Actions. Si llega el calendario antes de inicializar, el workflow se detendrá sin crear un historial nuevo por su cuenta.
 
@@ -85,7 +85,7 @@ Seguir `docs/github_actions/01_actualizacion_mensual.md`:
 5. Abrir el enlace real de Pages y comprobar reporte vigente, historial y métricas.
 6. Hacer una segunda ejecución manual sin marcar inicialización para comprobar que recupera el estado y no duplica emisiones si los datos no cambiaron.
 
-Estos pasos aún no están ejecutados al preparar este documento. Su verificación se hace con las salidas del servicio, no por la mera existencia del YAML.
+La configuración de Pages y las dos ejecuciones manuales ya se comprobaron. El apartado 8 registra los identificadores y resultados. Las instrucciones anteriores quedan como referencia: para consultas posteriores, dejar desmarcada la inicialización.
 
 ## 7. Qué cambia en el flujo de Git después de activar Actions
 
@@ -106,17 +106,46 @@ Se espera ver `origin/operacion` después del primer push correcto del workflow.
 
 ## 8. Registro verificable de esta etapa
 
-| Elemento | Estado al preparar la entrega |
-| --- | --- |
-| Último cierre previo de main | `f667dfc`, confirmado |
-| Script 11 y workflow mensual | Preparados |
-| Pruebas temporales de recuperación y mes simulado | Correctas; no publicadas como datos reales |
-| Conservación de huellas al hacer commit y clonar localmente | Comprobada |
-| Lectura YAML y sintaxis bash | Comprobadas |
-| Commit de esta unidad en el repositorio del usuario | Pendiente |
-| Primera ejecución real de Actions | Pendiente |
-| Reporte accesible en Pages | Pendiente |
-| Segunda ejecución real y continuidad del estado | Pendiente |
-| Primer disparo mensual programado | Pendiente |
+Verificación del 1 de noviembre de 2026, con código `bb559f0`:
 
-Los resultados posteriores se revisan contra esta lista. No se reescribe un commit ya publicado solo para insertar su propio SHA en su documentación.
+| Ejecución de Actions | Resultado | Evidencia |
+|---|---|---|
+| [41257750531](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41257750531) | Cancelada a los 45 minutos | Bloqueo en `apt-get update`, durante la preparación de R; no ejecutó el ciclo R ni escribió estado remoto. |
+| [41262543730](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262543730) | `actualizar` y `publicar` correctos | Inicialización explícita desde los archivos publicados; 297 meses, una emisión y 24 pronósticos; sin novedades de INALE. |
+| [41262927931](https://github.com/daniknd14econometrics-code/forecasting-remision-leche-uy/actions/runs/41262927931) | `actualizar` y `publicar` correctos | `FORECAST_INICIALIZAR=false`; recuperó `operacion`, conservó la misma emisión y 24 pronósticos, sin reestimar ni duplicar. |
+
+La primera ejecución correcta guardó `operacion` en `a4327b1`; la segunda avanzó a `6ea765f`. Su control quedó en `ultima_comprobacion.csv`, a las 01:54:38 UTC del 1 de noviembre de 2026 (02:54:38 en Madrid): origen septiembre de 2026, 297 meses, emisión `20261031_171120_23228`, cero meses nuevos, cero revisiones y cero errores evaluables. Son consultas reales a INALE; no se añadieron meses simulados al estado publicado.
+
+Daniel abrió el reporte público, el historial y las métricas y aportó capturas. Los reales y las diferencias continúan pendientes porque no se dispone de observados para octubre de 2026 en adelante. MAE y RMSE pendientes no equivalen a errores cero.
+
+El calendario mensual está configurado para el día 1 a las 09:17, zona `Europe/Madrid`. Estas comprobaciones fueron manuales: el primer disparo programado y la primera actualización con nuevos datos reales permanecen pendientes de observación.
+
+### Corrección del bloqueo y publicación
+
+El archivo `actualizar_pronosticos.yml` se reemplazó por la versión completa corregida. Daniel inspeccionó el diff: 14 líneas añadidas; `git diff --check` solo mostró el aviso de conversión LF/CRLF, sin defectos de espacios.
+
+```bat
+git add -- .github/workflows/actualizar_pronosticos.yml
+git commit -m "Fix Ubuntu package download stall in forecast workflow"
+git push origin main
+git fetch origin
+git status --short --branch
+git rev-list --left-right --count HEAD...origin/main
+git log -1 --oneline
+```
+
+Resultado aportado por Daniel: `bb559f0`, un archivo cambiado y 14 inserciones; push correcto, `## main...origin/main` sin cambios y `0 0`. Después inició un nuevo `Run workflow` desde `main`, con inicialización marcada porque la ejecución fallida no había creado el estado remoto. La segunda prueba correcta se inició después con la casilla desmarcada.
+
+### Cierre documental preparado
+
+Esta entrega actualiza exclusivamente cinco documentos: README, estado, guía de R 11, guía Actions 01 y este registro Git 08. No incluye scripts R, SQLite, salidas nuevas ni el workflow ya publicado.
+
+Tras reemplazarlos en la raíz, revisar en CMD:
+
+```bat
+git status --short --branch
+git --no-pager diff --stat
+git diff --check
+```
+
+Se esperan esos cinco documentos modificados. El commit y push de este cierre documental todavía no se han ejecutado; se harán después de revisar la salida en el trabajo guiado. No hace falta repetir estimaciones ni otra consulta manual para publicar documentación.
