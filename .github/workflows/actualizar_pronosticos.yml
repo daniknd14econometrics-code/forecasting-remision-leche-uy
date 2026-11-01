@@ -1,0 +1,117 @@
+name: Actualizar pronosticos mensuales
+
+# Consulta mensual y posibilidad de ejecucion manual. No se activa por cada push.
+on:
+  schedule:
+    - cron: '17 9 1 * *'
+      timezone: Europe/Madrid
+  workflow_dispatch:
+    inputs:
+      inicializar:
+        description: 'Solo la primera vez: crear la rama operacion si aun no existe'
+        type: boolean
+        required: false
+        default: false
+
+# Una sola operacion a la vez, incluyendo la publicacion; no cancelar escrituras.
+concurrency:
+  group: forecasting-operacion-mensual
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  actualizar:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: codigo
+    env:
+      TZ: UTC
+      FORECAST_ESTADO_DIR: ${{ github.workspace }}/estado
+      FORECAST_INICIALIZAR: ${{ github.event_name == 'workflow_dispatch' && inputs.inicializar && 'true' || 'false' }}
+
+    steps:
+      - name: Conservar saltos de linea de los archivos originales
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+
+      - name: Obtener codigo de main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: codigo
+          persist-credentials: false
+
+      - name: Recuperar la rama operacion o autorizar su primer arranque
+        env:
+          REPOSITORIO_URL: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          set +e
+          git ls-remote --exit-code --heads "$REPOSITORIO_URL" refs/heads/operacion
+          estado=$?
+          set -e
+          if [ "$estado" -eq 0 ]; then
+            git clone --depth=1 --single-branch --branch operacion "$REPOSITORIO_URL" "$FORECAST_ESTADO_DIR"
+          elif [ "$estado" -eq 2 ] && [ "$FORECAST_INICIALIZAR" = true ]; then
+            git init --initial-branch=operacion "$FORECAST_ESTADO_DIR"
+            git -C "$FORECAST_ESTADO_DIR" remote add origin "$REPOSITORIO_URL"
+          else
+            echo "::error::No se recupero operacion. No se reinicia el historial. Solo el primer arranque manual permite inicializar."
+            exit 1
+          fi
+
+      - name: Preparar R con la version del proyecto
+        uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
+        with:
+          r-version: '4.6.1'
+          use-public-rspm: true
+
+      - name: Restaurar paquetes registrados en renv.lock
+        uses: r-lib/actions/setup-renv@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
+        with:
+          working-directory: codigo
+
+      - name: Ejecutar recuperacion, ciclo 10, metricas y respaldo
+        run: Rscript -e 'source("R/11_operacion_github_actions.R", encoding = "UTF-8")'
+
+      - name: Confirmar y guardar el estado antes de publicar el reporte
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # El token temporal sirve solo para este repositorio y no se guarda en el estado.
+          gh auth setup-git --hostname github.com
+          git -C "$FORECAST_ESTADO_DIR" config user.name 'github-actions[bot]'
+          git -C "$FORECAST_ESTADO_DIR" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$FORECAST_ESTADO_DIR" add -- .gitattributes README.md formato_estado.txt modelo_cierre_md5.txt manifiesto_md5.csv ultima_comprobacion.csv estado publico
+          if ! git -C "$FORECAST_ESTADO_DIR" diff --cached --quiet; then
+            git -C "$FORECAST_ESTADO_DIR" commit -m "Update monthly forecast state: run $GITHUB_RUN_ID"
+            git -C "$FORECAST_ESTADO_DIR" push origin HEAD:refs/heads/operacion
+          fi
+
+      - name: Preparar los HTML y CSV para GitHub Pages
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: estado/publico
+
+  publicar:
+    needs: actualizar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - name: Publicar el reporte vigente y el historial
+        id: despliegue
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
